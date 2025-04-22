@@ -1,210 +1,179 @@
+/* === Cleaned & Updated CSS for Hangman Game === */
 
-  /* trial */
-  body {
-    margin: 0;
-    font-family: 'Segoe UI', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    overflow-x: hidden;
-    padding: 20px;
-  }
-  
-  .game-container {
-    max-width: 800px;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .top-bar {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    width: 100%;
-    margin-bottom: 10px;
-    gap: 10px;
-  }
-  
-  .score-timer {
-    display: flex;
-    gap: 20px;
-    align-items: center;
-  }
-  
+:root {
+  --bg: #f0f0f0;
+  --text: #333;
+  --dark-bg: #01011b;
+  --dark-text: #f1f1f1;
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+  transition: background 0.3s, color 0.3s;
+}
+
+.game-container {
+  max-width: 800px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.top-bar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 10px;
+  gap: 10px;
+  font-size: 1.1rem;
+}
+
+.score-timer {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.game-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+@media (min-width: 600px) {
   .game-area {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-  }
-  
-  @media (min-width: 600px) {
-    .game-area {
-      flex-direction: row;
-      justify-content: space-between;
-      align-items: flex-start;
-    }
-  
-    .keyboard-container {
-      flex: 1;
-      max-width: 400px;
-      padding-left: 20px;
-      background-color: #0a023a;
-      
-
-    }
-  }
-  
-  canvas {
-    background: #fff;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-  }
-  
-
-  
-  #message {
-    margin-top: 15px;
-    font-weight: bold;
-    font-size: 1.2rem;
-    color: #f10d0d;
-  }
-  
-  #restart-btn {
-    margin-top: 15px;
-    padding: 10px 20px;
-    font-size: 1rem;
-    background: #d10325;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-
-  #restart-btn:hover {
-    background-color: #0df0f8;
-  }
-
-  #hangman-canvas {
-    margin-bottom: 20px;
-    border: 1px solid #ccc;
-    background-color: #fff;
-  }
-
-  .game-board {
-    display: flex;
-    justify-content: center;
-    gap: 13rem;
-    align-items: flex-start;
-    flex-wrap: wrap;
-    margin-bottom: -30px;
-    background-color: white;
-  
-  }
-  
-  #hangman-canvas {
-    border: 1px solid #ccc;
-    background-color: #d30b7931;
-  }
-  
-  .keyboard {
-    display: grid;
-    grid-template-columns: repeat(10, 1fr);
-    gap: 5px;
-    max-width: 500px;
-    background-color:rgba(228, 42, 42, 0.014);
-    height: 50px;
-    width: 350px;
-  }
-
-/* mobile friendly
-
-  @media (max-width: 500px) {
-    .game-board {
-      flex-direction: column;
-      align-items: center;
-      padding: 2px;
-    }
-  
-    .keyboard {
-      grid-template-columns: repeat(6, 1fr);
-      max-width: 100%;
-    }
-  
-    #hangman-canvas {
-      width: 50%;
-      height: auto;
-    }
-  
-    #word {
-      font-size: 1.5rem;
-      letter-spacing: 5px;
-      height: 100px;
-    }
-  
-    .game-container {
-      width: 50%;
-      padding: 1rem;
-    }
-  } */
-
-  /* Top Bar and Themes */
-  body {
-    transition: background 0.3s, color 0.3s;
-  }
-  
-  .top-bar {
-    display: flex;
+    flex-direction: row;
     justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-    font-size: 1.1rem;
+    align-items: flex-start;
   }
-  
-  #toggle-theme {
-    padding: 5px 10px;
-    font-size: 1rem;
-    background: #0a023a;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    cursor: pointer;
+  .keyboard-container {
+    flex: 1;
+    max-width: 400px;
+    padding-left: 20px;
   }
-  
-  .dark-mode {
-    background-color: #01011b;
-    color: #f1f1f1;
-  }
-  
-  .dark-mode .game-container {
-    background-color: #131212;
-    box-shadow: 0 0 10px rgba(255,255,255,0.1);
-  }
-  
-  .dark-mode #toggle-theme {
-    background: #02fdf1c2;
-    color: #fff;
-    border: 1px solid #444;
-  }
+}
 
-  #start-btn {
-    padding: 10px 20px;
-    font-size: 1.2rem;
-    margin: 10px 0;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background 0.3s ease;
-  }
-  
-  #start-btn:hover {
-    background-color: #f4f80d;
-  }
-  
-  
+canvas {
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+#message {
+  margin-top: 15px;
+  font-weight: bold;
+  font-size: 1.2rem;
+  color: #f10d0d;
+  text-align: center;
+}
+
+#restart-btn, #start-btn {
+  margin-top: 15px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  background: #d10325;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+#restart-btn:hover, #start-btn:hover {
+  background-color: #0df0f8;
+  color: #000;
+}
+
+#start-btn {
+  background-color: #4CAF50;
+}
+
+#start-btn:hover {
+  background-color: #f4f80d;
+}
+
+.game-board {
+  display: flex;
+  justify-content: center;
+  gap: 13rem;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.keyboard {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 5px;
+  max-width: 500px;
+  width: 100%;
+  padding: 10px;
+  background-color: rgba(228, 42, 42, 0.05);
+  border-radius: 8px;
+}
+
+.key {
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.key:hover {
+  background-color: #ddd;
+}
+
+#toggle-theme {
+  padding: 5px 10px;
+  font-size: 1rem;
+  background: #0a023a;
+  color: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Dark Mode */
+.dark-mode {
+  background-color: var(--dark-bg);
+  color: var(--dark-text);
+}
+
+.dark-mode .game-container {
+  background-color: #131212;
+  box-shadow: 0 0 10px rgba(255,255,255,0.1);
+}
+
+.dark-mode #toggle-theme {
+  background: #02fdf1c2;
+  color: #fff;
+  border: 1px solid #444;
+}
+
+.dark-mode .key {
+  background-color: #2a2a2a;
+  color: #f1f1f1;
+  border-color: #555;
+}
+
+.dark-mode .key:hover {
+  background-color: #444;
+}
