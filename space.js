@@ -1,3 +1,8 @@
+let correctLetters = [];
+let wrongLetters = [];
+let selectedWord = '';
+
+
 let score = 0;
 let time = 30;
 let timerInterval;
@@ -47,7 +52,7 @@ const message = document.getElementById('message');
 // const restartBtn = document.getElementById('restart-btn');
 
 const wordLevels = [
-  ['cat', 'sun', 'bat', 'dog'], // easy
+  ['cat', 'sun', 'eat', 'dog'], // easy
   ['horse', 'apple', 'grape', 'plane'], // medium
   ['wycombe', 'wizard', 'rhythm', 'jumble'], // hard
   ['awkward', 'cryptic', 'dwarves', 'xylophone'], // extreme
@@ -97,16 +102,17 @@ restartBtn.style.display = 'none';
     }, 1000);
   }
   
-  function updateDisplay() {
-    // Update word display
-    const wordDisplay = selectedWord.split('').map(letter =>
-      correctLetters.includes(letter) ? letter : '_'
-    ).join(' ');
-    document.getElementById('word').textContent = wordDisplay;
+ function updateDisplay() {
+  const wordContainer = document.getElementById('word');
+  wordContainer.innerHTML = selectedWord
+    .split('')
+    .map(letter => (correctLetters.includes(letter) ? letter : '_'))
+    .join(' ');
   
-    // Update wrong guesses and attempts
-    document.getElementById('wrong-letters').textContent = wrongLetters.join(', ');
-    document.getElementById('attempts').textContent = maxAttempts - wrongLetters.length;
+  document.getElementById('wrong-letters').textContent = `Wrong: ${wrongLetters.join(', ')}`;
+  document.getElementById('attempts').textContent = maxAttempts - wrongLetters.length;
+}
+
   
     // Draw hangman part
     drawHangman(wrongLetters.length);
@@ -150,15 +156,23 @@ btn.classList.add('key');
   });
 }
 
-function handleGuess(letter, button) {
-  button.disabled = true;
+function handleGuess(letter) {
   if (selectedWord.includes(letter)) {
-    correctLetters.push(letter);
+    if (!correctLetters.includes(letter)) {
+      correctLetters.push(letter);
+      updateDisplay();
+      checkWin();
+    }
   } else {
-    wrongLetters.push(letter);
+    if (!wrongLetters.includes(letter)) {
+      wrongLetters.push(letter);
+      updateDisplay();
+      drawNextPart();
+      checkLose();
+    }
   }
-  updateDisplay();
 }
+
 
 function disableKeyboard() {
   const buttons = keyboard.querySelectorAll('button');
