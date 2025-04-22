@@ -1,10 +1,8 @@
-/* === Cleaned & Updated CSS for Hangman Game === */
-
 :root {
-  --bg: #f0f0f0;
-  --text: #333;
-  --dark-bg: #01011b;
-  --dark-text: #f1f1f1;
+  --bg: #f5f5f5;
+  --text: #222;
+  --primary: #4CAF50;
+  --hover: #f4f80d;
 }
 
 body {
@@ -16,6 +14,7 @@ body {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
+  overflow-x: hidden;
   padding: 20px;
   transition: background 0.3s, color 0.3s;
 }
@@ -26,10 +25,6 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
 
 .top-bar {
@@ -61,10 +56,12 @@ body {
     justify-content: space-between;
     align-items: flex-start;
   }
+
   .keyboard-container {
     flex: 1;
     max-width: 400px;
     padding-left: 20px;
+    background-color: #0a023a;
   }
 }
 
@@ -72,7 +69,12 @@ canvas {
   background: #fff;
   border: 1px solid #ccc;
   border-radius: 10px;
+}
+
+#hangman-canvas {
   margin-bottom: 20px;
+  background-color: #d30b7931;
+  border: 1px solid #ccc;
 }
 
 #message {
@@ -80,40 +82,22 @@ canvas {
   font-weight: bold;
   font-size: 1.2rem;
   color: #f10d0d;
-  text-align: center;
 }
 
 #restart-btn, #start-btn {
   margin-top: 15px;
   padding: 10px 20px;
   font-size: 1rem;
-  background: #d10325;
+  background: var(--primary);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 5px;
   cursor: pointer;
   transition: background 0.3s ease;
 }
 
 #restart-btn:hover, #start-btn:hover {
-  background-color: #0df0f8;
-  color: #000;
-}
-
-#start-btn {
-  background-color: #4CAF50;
-}
-
-#start-btn:hover {
-  background-color: #f4f80d;
-}
-
-.game-board {
-  display: flex;
-  justify-content: center;
-  gap: 13rem;
-  align-items: flex-start;
-  flex-wrap: wrap;
+  background-color: var(--hover);
 }
 
 .keyboard {
@@ -121,40 +105,55 @@ canvas {
   grid-template-columns: repeat(10, 1fr);
   gap: 5px;
   max-width: 500px;
-  width: 100%;
+  background-color: rgba(228, 42, 42, 0.014);
   padding: 10px;
-  background-color: rgba(228, 42, 42, 0.05);
   border-radius: 8px;
 }
 
+.keyboard-row {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+  margin: 4px 0;
+}
+
 .key {
-  padding: 10px;
+  padding: 12px 14px;
   font-size: 1rem;
+  background: #fff;
   border: 1px solid #ccc;
-  border-radius: 4px;
-  background-color: #fff;
+  border-radius: 6px;
   cursor: pointer;
-  transition: background 0.2s;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: transform 0.1s ease, background 0.2s;
 }
 
 .key:hover {
-  background-color: #ddd;
+  background-color: #f0f0f0;
+  transform: scale(1.2);
+  z-index: 10;
+}
+
+.key:disabled {
+  background-color: #ccc;
+  color: #666;
+  cursor: not-allowed;
 }
 
 #toggle-theme {
   padding: 5px 10px;
   font-size: 1rem;
   background: #0a023a;
-  color: white;
   border: 1px solid #ccc;
   border-radius: 4px;
   cursor: pointer;
 }
 
-/* Dark Mode */
 .dark-mode {
-  background-color: var(--dark-bg);
-  color: var(--dark-text);
+  --bg: #01011b;
+  --text: #f1f1f1;
+  --primary: #02fdf1c2;
+  --hover: #02fdf1;
 }
 
 .dark-mode .game-container {
@@ -163,17 +162,36 @@ canvas {
 }
 
 .dark-mode #toggle-theme {
-  background: #02fdf1c2;
+  background: var(--primary);
   color: #fff;
   border: 1px solid #444;
 }
 
-.dark-mode .key {
-  background-color: #2a2a2a;
-  color: #f1f1f1;
-  border-color: #555;
-}
+@media (max-width: 500px) {
+  .game-board {
+    flex-direction: column;
+    align-items: center;
+    padding: 2px;
+  }
 
-.dark-mode .key:hover {
-  background-color: #444;
+  .keyboard {
+    grid-template-columns: repeat(6, 1fr);
+    max-width: 100%;
+  }
+
+  #hangman-canvas {
+    width: 50%;
+    height: auto;
+  }
+
+  #word {
+    font-size: 1.5rem;
+    letter-spacing: 5px;
+    height: 100px;
+  }
+
+  .game-container {
+    width: 90%;
+    padding: 1rem;
+  }
 }
