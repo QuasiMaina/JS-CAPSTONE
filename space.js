@@ -1,5 +1,3 @@
-// === Cleaned & Updated JavaScript for Hangman ===
-
 // Game state variables
 let selectedWord = '';
 let correctLetters = [];
@@ -23,6 +21,10 @@ const timerSpan = document.getElementById('timer');
 const startBtn = document.getElementById('start-btn');
 const restartBtn = document.getElementById('restart-btn');
 const toggleBtn = document.getElementById('toggle-theme');
+
+// === Dark overlay reference & total time ===
+const darkOverlay = document.getElementById('dark-overlay');
+const totalTime = 30;
 
 const wordLevels = [
   ['cat', 'sun', 'eat', 'dog'],
@@ -73,17 +75,32 @@ function startGame() {
   resetTimer();
 }
 
+// === resetTimer with screen darkening ===
 function resetTimer() {
   clearInterval(timerInterval);
-  time = 30;
+  time = totalTime;
   timerSpan.textContent = time;
+
+  // === ADDED: Reset overlay opacity ===
+  if (darkOverlay) darkOverlay.style.opacity = 0;
+
   timerInterval = setInterval(() => {
     time--;
     timerSpan.textContent = time;
+
+    // === Gradually darken screen ===
+    if (darkOverlay) {
+      const darkness = 1 - time / totalTime;
+      darkOverlay.style.opacity = Math.min(darkness, 0.9);
+    }
+
     if (time <= 0) {
       clearInterval(timerInterval);
       message.textContent = `⏰ Time’s up! ${getRandomRoast()} Word was: ${selectedWord}`;
       disableKeyboard();
+
+      // === Final full darkness ===
+      if (darkOverlay) darkOverlay.style.opacity = 1;
     }
   }, 1000);
 }
@@ -228,6 +245,9 @@ restartBtn.addEventListener('click', () => {
   wordDisplay.textContent = '';
   wrongLettersSpan.textContent = '';
   attemptsSpan.textContent = maxAttempts;
+
+  // ===Reset overlay darkness on restart ===
+  if (darkOverlay) darkOverlay.style.opacity = 0;
 });
 
 // Theme Toggle
