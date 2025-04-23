@@ -81,10 +81,10 @@ function showPopup(message) {
 }
 
 const wordLevels = [
-  ['cat', 'sun', 'eat', 'dog'],
-  ['horse', 'apple', 'grape', 'plane'],
-  ['wycombe', 'wizard', 'rhythm', 'jumble'],
-  ['awkward', 'cryptic', 'dwarves', 'xylophone']
+  ['cat', 'sun', 'ear', 'dog', 'rat', 'bun', 'mat', 'pin', 'and', 'pan', 'car'],
+  ['horse', 'apple', 'grape', 'jump', 'fish', 'snake', 'lemon', 'yoyo', 'gift'],
+  ['kangaroo', 'igloo', 'rabbit', 'gift', 'violin', 'elephant', 'carrot', 'chicken'],
+  ['monkey', 'monkey', 'umbrella', 'xylophone', 'question', 'helicopter', 'mistress', 'mattresses']
 ];
 
 function startGame() {
