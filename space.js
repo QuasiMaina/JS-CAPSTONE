@@ -126,13 +126,13 @@ function resetTimer() {
     }
 
     // Volume ramping from 23s to 3s
-    if (time <= 23 && time >= 3) {
+    if (time <= 20 && time >= 1) {
       const volume = (23 - time) / 20; // Goes from 0 to ~1
       tickSound.volume = Math.min(1, volume);
     }
 
-    // Silence at 2s
-    if (time === 2) {
+    // Silence at 1s
+    if (time === 1) {
       tickSound.pause();
       tickSound.currentTime = 0;
       document.body.style.backgroundColor = 'black';
