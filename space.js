@@ -1,12 +1,10 @@
-// === Cleaned & Updated JavaScript for Hangman ===
-
 // Game state variables
 let selectedWord = '';
 let correctLetters = [];
 let wrongLetters = [];
 let level = 0;
 let score = 0;
-let time = 50; // ⬅️ MODIFIED
+let time = 50; // ✅ Changed from 30 to 50
 let timerInterval;
 const maxAttempts = 6;
 
@@ -71,36 +69,23 @@ function startGame() {
   generateKeyboard();
   clearCanvas();
   resetTimer();
-  document.body.style.backgroundColor = ''; // ⬅️ ADDED: reset bg
 }
 
 function resetTimer() {
   clearInterval(timerInterval);
-  time = 50; // ⬅️ MODIFIED
-  timerSpan.textContent = time;
+  time = 50; // ✅ Changed from 30 to 50
+  timerSpan.textContent = `${time}s`; // ✅ Changed to show "Xs" format
+
   timerInterval = setInterval(() => {
     time--;
-    timerSpan.textContent = time;
+    timerSpan.textContent = `${time}s`; // ✅ Changed to show "Xs" format
 
-    // Darken background at 2 seconds
-    if (time <= 2 && time > 0) {
-      document.body.style.backgroundColor = `rgba(0, 0, 0, ${1 - time / 2})`; // ⬅️ ADDED
-    }
-
-    // Flash at 0
-    if (time === 0) {
+    if (time <= 0) {
       clearInterval(timerInterval);
-      flashScreen(); // ⬅️ ADDED
-      document.body.style.backgroundColor = ''; // ⬅️ ADDED: reset background
       message.textContent = `⏰ Time’s up! ${getRandomRoast()} Word was: ${selectedWord}`;
       disableKeyboard();
     }
   }, 1000);
-}
-
-function flashScreen() {
-  document.body.classList.add('flash'); // ⬅️ ADDED
-  setTimeout(() => document.body.classList.remove('flash'), 300); // ⬅️ ADDED
 }
 
 function updateDisplay() {
@@ -235,7 +220,7 @@ restartBtn.addEventListener('click', () => {
   score = 0;
   level = 0;
   scoreSpan.textContent = score;
-  timerSpan.textContent = 50; // ⬅️ MODIFIED
+  timerSpan.textContent = `50s`; // ✅ Updated to reflect the new format
   correctLetters = [];
   wrongLetters = [];
   clearCanvas();
@@ -243,7 +228,6 @@ restartBtn.addEventListener('click', () => {
   wordDisplay.textContent = '';
   wrongLettersSpan.textContent = '';
   attemptsSpan.textContent = maxAttempts;
-  document.body.style.backgroundColor = ''; // ⬅️ ADDED
 });
 
 // Theme Toggle
