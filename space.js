@@ -1,11 +1,12 @@
 // Game state variables
+const totalTime = 50; // ⬅️ ADDED: Total timer duration
+let time = totalTime; // ⬅️ MODIFIED: Initial time uses totalTime
 let selectedWord = '';
 let correctLetters = [];
 let wrongLetters = [];
 let level = 0;
 let score = 0;
-const totalTime = 50;
-let time = totalTime;
+let timerInterval;
 const maxAttempts = 6;
 
 // DOM Elements
@@ -21,10 +22,6 @@ const timerSpan = document.getElementById('timer');
 const startBtn = document.getElementById('start-btn');
 const restartBtn = document.getElementById('restart-btn');
 const toggleBtn = document.getElementById('toggle-theme');
-
-// === Dark overlay reference & total time ===
-const darkOverlay = document.getElementById('dark-overlay');
-const totalTime = 30;
 
 const wordLevels = [
   ['cat', 'sun', 'eat', 'dog'],
@@ -75,50 +72,60 @@ function startGame() {
   resetTimer();
 }
 
-// === resetTimer with screen darkening ===
 function resetTimer() {
   clearInterval(timerInterval);
-  time = totalTime;
-  timerSpan.textContent = time;
-
-  if (darkOverlay) {
-    darkOverlay.style.opacity = 0;
-    darkOverlay.style.backgroundColor = 'black'; // reset to black
-  }
-
+  time = totalTime; // ⬅️ MODIFIED
+  timerSpan.textContent = totalTime; // ⬅️ MODIFIED
+  document.body.style.backgroundColor = ''; // ⬅️ ADDED: reset background
   timerInterval = setInterval(() => {
     time--;
-    timerSpan.textContent = totalTime;
-
-    // === Darkness ramps up until 2 seconds left ===
-    if (darkOverlay) {
-      if (time > 2) {
-        const maxDarkness = 1;
-        const rampTime = totalTime - 2;
-        const elapsed = totalTime - time;
-        const darkness = Math.min((elapsed / rampTime) * maxDarkness, maxDarkness);
-        darkOverlay.style.opacity = darkness;
-        darkOverlay.style.backgroundColor = 'black';
-      } else if (time === 0) {
-        // === Dramatic flash ===
-        darkOverlay.style.transition = 'none'; // reset transition for instant flash
-        darkOverlay.style.backgroundColor = 'white';
-        darkOverlay.style.opacity = 1;
-
-        // Then fade it out after flash
-        setTimeout(() => {
-          darkOverlay.style.transition = 'opacity 1s ease-in-out';
-          darkOverlay.style.opacity = 0;
-        }, 200); // quick flash duration
-      }
-    }
-
+    timerSpan.textContent = time;
+    updateDarkness(); // ⬅️ ADDED
+    drawRadialTimer(); // ⬅️ ADDED
     if (time <= 0) {
       clearInterval(timerInterval);
-      message.textContent = `⏰ Time’s up! ${getRandomRoast()} Word was: ${selectedWord}`;
-      disableKeyboard();
+      dramaticFlash(); // ⬅️ ADDED
+      setTimeout(() => {
+        document.body.style.backgroundColor = '';
+        message.textContent = `⏰ Time’s up! ${getRandomRoast()} Word was: ${selectedWord}`;
+        disableKeyboard();
+      }, 200);
     }
   }, 1000);
+}
+
+function updateDarkness() { // ⬅️ ADDED
+  const darkness = Math.max(0, Math.min(1, 1 - (time - 2) / (totalTime - 2)));
+  document.body.style.backgroundColor = `rgba(0, 0, 0, ${darkness * 0.8})`;
+}
+
+function dramaticFlash() { // ⬅️ ADDED
+  document.body.style.backgroundColor = '#fff';
+  setTimeout(() => document.body.style.backgroundColor = '#000', 100);
+}
+
+function drawRadialTimer() { // ⬅️ ADDED
+  const radius = 30;
+  const centerX = canvas.width - 50;
+  const centerY = 50;
+  const startAngle = -0.5 * Math.PI;
+  const endAngle = startAngle + (2 * Math.PI * (time / totalTime));
+
+  ctx.clearRect(canvas.width - 100, 0, 100, 100);
+
+  // background circle
+  ctx.beginPath();
+  ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+  ctx.strokeStyle = '#ccc';
+  ctx.lineWidth = 5;
+  ctx.stroke();
+
+  // timer arc
+  ctx.beginPath();
+  ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+  ctx.strokeStyle = '#f00';
+  ctx.lineWidth = 5;
+  ctx.stroke();
 }
 
 function updateDisplay() {
@@ -253,7 +260,7 @@ restartBtn.addEventListener('click', () => {
   score = 0;
   level = 0;
   scoreSpan.textContent = score;
-  timerSpan.textContent = 30;
+  timerSpan.textContent = totalTime; // ⬅️ MODIFIED
   correctLetters = [];
   wrongLetters = [];
   clearCanvas();
@@ -261,9 +268,6 @@ restartBtn.addEventListener('click', () => {
   wordDisplay.textContent = '';
   wrongLettersSpan.textContent = '';
   attemptsSpan.textContent = maxAttempts;
-
-  // ===Reset overlay darkness on restart ===
-  if (darkOverlay) darkOverlay.style.opacity = 0;
 });
 
 // Theme Toggle
