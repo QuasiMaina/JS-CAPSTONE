@@ -52,13 +52,17 @@ popupBtn.addEventListener('click', () => {
 });
 
 const allRoasts = [
-  "Haujui kuguess?", "Did you try turning your brain on?",
-  "Haujui hii?", "You're the reason the hangman lost his job.",
+  "Haujui kuguess?", 
+  "Kababa usi jiumize uki fikiria",
+  "Haujui hii?", 
+  "You're the reason the hangman lost his job.",
   "Hope you’re better at life than this game.",
-  "English not Englishing?", "Oof. That word was easier than breathing.",
-  "If bad guesses were art, you'd be Picasso.",
-  "Even autocorrect gave up on you.",
-  "You spelled disaster correctly at least."
+  "English not Englishing?", 
+  "Oof. That word was easier than breathing.",
+  "I'm genuinely disappointed in you.",
+  "Surely, na ati wewe ni grown up...",
+  "JUST. SMH!."
+  "usi jali kamum, at least wewe ni mrembo."
 ];
 let roastQueue = shuffleArray([...allRoasts]);
 
