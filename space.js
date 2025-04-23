@@ -1,3 +1,5 @@
+//  Gradual Darkening and Tick Audio ===
+
 let selectedWord = '';
 let correctLetters = [];
 let wrongLetters = [];
