@@ -1,5 +1,3 @@
-// === Cleaned & Updated JavaScript for Hangman with Ticking Effect ===
-
 // Game state variables
 let selectedWord = '';
 let correctLetters = [];
@@ -11,7 +9,7 @@ let timerInterval;
 const maxAttempts = 6;
 
 // Audio Setup 🔊
-const tickSound = new Audio('ticking sound.mp3'); // ⬅️ ADD your ticking audio here
+const tickSound = new Audio('ticking sound.mp3'); // 
 tickSound.loop = true;
 tickSound.volume = 0; // Start silent
 
@@ -92,7 +90,7 @@ function resetTimer() {
     timerSpan.textContent = time;
 
     // Ticking logic 🔊
-    if (time <= 23 && time > 2) {
+    if (time <= 20 && time > 2) {
       if (tickSound.paused) tickSound.play();
       tickSound.volume = (1 - (time - 3) / 17); // from 0 at 20s to 1 at 3s
     }
@@ -186,7 +184,7 @@ function checkGameStatus() {
     setTimeout(startGame, 1500);
   }
   if (wrongLetters.length >= maxAttempts) {
-    message.textContent = `💀 You Lost! ${getRandomRoast()} Word was: ${selectedWord}`;
+    message.textContent = `💀 Loser! ${getRandomRoast()} Word was: ${selectedWord}`;
     disableKeyboard();
     clearInterval(timerInterval);
     tickSound.pause();
