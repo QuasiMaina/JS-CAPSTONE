@@ -6,7 +6,7 @@ let correctLetters = [];
 let wrongLetters = [];
 let level = 0;
 let score = 0;
-let time = 45; // ⬅️ MODIFIED
+let time = 30; // ⬅️ MODIFIED
 let timerInterval;
 const maxAttempts = 6;
 
@@ -71,34 +71,35 @@ function startGame() {
   generateKeyboard();
   clearCanvas();
   resetTimer();
-  document.body.style.backgroundColor = 'rgba(0, 0, 0, 0.05)'; // ⬅️ ADDED gradual start
+  document.body.style.backgroundColor = ''; // ⬅️ reset bg
+  document.body.style.filter = ''; // ⬅️ reset filter
 }
 
 function resetTimer() {
   clearInterval(timerInterval);
-  time = 45; // ⬅️ MODIFIED
+  time = 30; // ⬅️ MODIFIED
   timerSpan.textContent = time;
   timerInterval = setInterval(() => {
     time--;
     timerSpan.textContent = time;
 
-    // Gradually darken the screen as time decreases ⬇️⬇️⬇️
-    if (time <= 45 && time > 2) {
-  // Exponential darkness: gets darker much faster near 2s
-  const darkness = Math.pow((45 - time) / 43, 2); // Squared for steeper ramp
-  document.body.style.backgroundColor = `rgba(0, 0, 0, ${Math.min(darkness, 1)})`;
-}
-
-    // At 2 seconds left, screen becomes pitch black
-    if (time === 2) {
-      document.body.style.backgroundColor = 'black'; // ⬅️ ADDED
+    if (time <= 30 && time > 2) {
+      // Gradual darkness with exponential curve
+      const darkness = Math.pow((30 - time) / 28, 2);
+      document.body.style.backgroundColor = `rgba(0, 0, 0, ${Math.min(darkness, 1)})`;
+      document.body.style.filter = `brightness(${1 - darkness * 0.8})`; // ⬅️ darken all content
     }
 
-    // At 0, flash and reset background
+    if (time === 2) {
+      document.body.style.backgroundColor = 'black';
+      document.body.style.filter = 'brightness(0)';
+    }
+
     if (time === 0) {
       clearInterval(timerInterval);
-      flashScreen(); // ⬅️ FLASH EFFECT
-      document.body.style.backgroundColor = ''; // ⬅️ RESET BACKGROUND
+      flashScreen();
+      document.body.style.backgroundColor = '';
+      document.body.style.filter = '';
       message.textContent = `⏰ Time’s up! ${getRandomRoast()} Word was: ${selectedWord}`;
       disableKeyboard();
     }
@@ -106,8 +107,8 @@ function resetTimer() {
 }
 
 function flashScreen() {
-  document.body.classList.add('flash'); // ⬅️ ADDED
-  setTimeout(() => document.body.classList.remove('flash'), 300); // ⬅️ ADDED
+  document.body.classList.add('flash');
+  setTimeout(() => document.body.classList.remove('flash'), 300);
 }
 
 function updateDisplay() {
@@ -195,12 +196,12 @@ function drawBase() {
 
 function drawHangman(wrongCount) {
   const animations = [
-    () => ctx.arc(130, 60, 20, 0, Math.PI * 2), // head
-    () => animateLine(130, 80, 130, 140),      // body
-    () => animateLine(130, 100, 100, 120),     // left arm
-    () => animateLine(130, 100, 160, 120),     // right arm
-    () => animateLine(130, 140, 100, 180),     // left leg
-    () => animateLine(130, 140, 160, 180)      // right leg
+    () => ctx.arc(130, 60, 20, 0, Math.PI * 2),
+    () => animateLine(130, 80, 130, 140),
+    () => animateLine(130, 100, 100, 120),
+    () => animateLine(130, 100, 160, 120),
+    () => animateLine(130, 140, 100, 180),
+    () => animateLine(130, 140, 160, 180)
   ];
   if (wrongCount > 0 && wrongCount <= animations.length) {
     ctx.beginPath();
@@ -242,7 +243,7 @@ restartBtn.addEventListener('click', () => {
   score = 0;
   level = 0;
   scoreSpan.textContent = score;
-  timerSpan.textContent = 45; // ⬅️ MODIFIED
+  timerSpan.textContent = 30;
   correctLetters = [];
   wrongLetters = [];
   clearCanvas();
@@ -250,7 +251,8 @@ restartBtn.addEventListener('click', () => {
   wordDisplay.textContent = '';
   wrongLettersSpan.textContent = '';
   attemptsSpan.textContent = maxAttempts;
-  document.body.style.backgroundColor = ''; // ⬅️ RESET BG
+  document.body.style.backgroundColor = '';
+  document.body.style.filter = '';
 });
 
 // Theme Toggle
