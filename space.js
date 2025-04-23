@@ -4,7 +4,7 @@ let correctLetters = [];
 let wrongLetters = [];
 let level = 0;
 let score = 0;
-let time = 30;
+const totalTime = 50;
 let timerInterval;
 const maxAttempts = 6;
 
@@ -88,7 +88,7 @@ function resetTimer() {
 
   timerInterval = setInterval(() => {
     time--;
-    timerSpan.textContent = time;
+    timerSpan.textContent = totalTime;
 
     // === Darkness ramps up until 2 seconds left ===
     if (darkOverlay) {
