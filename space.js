@@ -1,6 +1,5 @@
-// === Cleaned & Updated JavaScript for Hangman with Ticking Clock ===
+// === Combined JavaScript for Hangman with Timer, Roasts, and Animations ===
 
-// Game state variables
 let selectedWord = '';
 let correctLetters = [];
 let wrongLetters = [];
@@ -10,12 +9,6 @@ let time = 30;
 let timerInterval;
 const maxAttempts = 6;
 
-// Audio setup
-const tickSound = new Audio('ticking sound.mp3');
-tickSound.loop = true;
-tickSound.volume = 0;
-
-// DOM Elements
 const canvas = document.getElementById('hangman-canvas');
 const ctx = canvas.getContext('2d');
 const wordDisplay = document.getElementById('word');
@@ -29,7 +22,10 @@ const startBtn = document.getElementById('start-btn');
 const restartBtn = document.getElementById('restart-btn');
 const toggleBtn = document.getElementById('toggle-theme');
 
-// Create popup
+const tickSound = new Audio('ticking sound.mp3');
+tickSound.loop = true;
+tickSound.volume = 0;
+
 const popup = document.createElement('div');
 popup.className = 'popup';
 popup.style.display = 'none';
@@ -56,7 +52,6 @@ popupBtn.addEventListener('click', () => {
   popup.style.display = 'none';
 });
 
-// Roast logic
 const allRoasts = [
   "Haujui kuguess?", "Did you try turning your brain on?",
   "Haujui hii?", "You're the reason the hangman lost his job.",
@@ -90,7 +85,7 @@ const wordLevels = [
   ['cat', 'sun', 'eat', 'dog'],
   ['horse', 'apple', 'grape', 'plane'],
   ['wycombe', 'wizard', 'rhythm', 'jumble'],
-  ['awkward', 'cryptic', 'dwarves', 'xylophone'],
+  ['awkward', 'cryptic', 'dwarves', 'xylophone']
 ];
 
 function startGame() {
@@ -106,6 +101,7 @@ function startGame() {
   clearCanvas();
   resetTimer();
   document.body.style.backgroundColor = '';
+  popup.style.display = 'none';
 }
 
 function resetTimer() {
@@ -120,31 +116,20 @@ function resetTimer() {
     time--;
     timerSpan.textContent = time;
 
-    // Start ticking at 23s
-    if (time === 23) {
-      tickSound.play().catch(() => {}); // Try play, ignore error if blocked
-    }
-
-    // Volume ramping from 23s to 3s
+    if (time === 23) tickSound.play().catch(() => {});
     if (time <= 23 && time >= 1) {
-      const volume = (23 - time) / 20; // Goes from 0 to ~1
+      const volume = (23 - time) / 20;
       tickSound.volume = Math.min(1, volume);
     }
-
-    // Silence at 1s
     if (time === 1) {
       tickSound.pause();
       tickSound.currentTime = 0;
       document.body.style.backgroundColor = 'black';
     }
-
-    // Gradual darkening from 10s down
     if (time <= 10 && time > 2) {
       const intensity = (10 - time) / 10;
       document.body.style.backgroundColor = `rgba(0, 0, 0, ${intensity})`;
     }
-
-    // Time’s up
     if (time === 0) {
       clearInterval(timerInterval);
       flashScreen();
@@ -245,12 +230,12 @@ function drawBase() {
 
 function drawHangman(wrongCount) {
   const animations = [
-    () => ctx.arc(130, 60, 20, 0, Math.PI * 2), // head
-    () => animateLine(130, 80, 130, 140),      // body
-    () => animateLine(130, 100, 100, 120),     // left arm
-    () => animateLine(130, 100, 160, 120),     // right arm
-    () => animateLine(130, 140, 100, 180),     // left leg
-    () => animateLine(130, 140, 160, 180)      // right leg
+    () => ctx.arc(130, 60, 20, 0, Math.PI * 2),
+    () => animateLine(130, 80, 130, 140),
+    () => animateLine(130, 100, 100, 120),
+    () => animateLine(130, 100, 160, 120),
+    () => animateLine(130, 140, 100, 180),
+    () => animateLine(130, 140, 160, 180)
   ];
   if (wrongCount > 0 && wrongCount <= animations.length) {
     ctx.beginPath();
