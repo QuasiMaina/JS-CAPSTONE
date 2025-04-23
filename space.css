@@ -101,6 +101,22 @@ body {
   cursor: not-allowed;
 }
 
+.key.correct {
+  background-color: #4caf50; /* green */
+  color: white;
+}
+
+.key.wrong {
+  background-color: #f44336; /* red */
+  color: white;
+}
+
+.key:disabled {
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+
 #message {
   margin-top: 15px;
   font-weight: bold;
