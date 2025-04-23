@@ -4,7 +4,7 @@ let correctLetters = [];
 let wrongLetters = [];
 let level = 0;
 let score = 0;
-let time = 50; // ✅ Changed from 30 to 50
+let time = 50; // ⬅️ MODIFIED: Increased timer
 let timerInterval;
 const maxAttempts = 6;
 
@@ -69,23 +69,34 @@ function startGame() {
   generateKeyboard();
   clearCanvas();
   resetTimer();
+  document.body.style.backgroundColor = ''; // ⬅️ ADDED: reset bg when game starts
 }
 
 function resetTimer() {
   clearInterval(timerInterval);
-  time = 50; // ✅ Changed from 30 to 50
-  timerSpan.textContent = `${time}s`; // ✅ Changed to show "Xs" format
-
+  time = 50; // ⬅️ MODIFIED: timer value
+  timerSpan.textContent = time;
   timerInterval = setInterval(() => {
     time--;
-    timerSpan.textContent = `${time}s`; // ✅ Changed to show "Xs" format
+    timerSpan.textContent = time;
 
-    if (time <= 0) {
+    if (time <= 2 && time > 0) {
+      document.body.style.backgroundColor = `rgba(0, 0, 0, ${1 - time / 2})`; // ⬅️ ADDED: darken background
+    }
+
+    if (time === 0) {
       clearInterval(timerInterval);
+      flashScreen(); // ⬅️ ADDED: flash on timeout
+      document.body.style.backgroundColor = ''; // ⬅️ reset background
       message.textContent = `⏰ Time’s up! ${getRandomRoast()} Word was: ${selectedWord}`;
       disableKeyboard();
     }
   }, 1000);
+}
+
+function flashScreen() {
+  document.body.classList.add('flash'); // ⬅️ ADDED
+  setTimeout(() => document.body.classList.remove('flash'), 300); // ⬅️ ADDED
 }
 
 function updateDisplay() {
@@ -220,7 +231,7 @@ restartBtn.addEventListener('click', () => {
   score = 0;
   level = 0;
   scoreSpan.textContent = score;
-  timerSpan.textContent = `50s`; // ✅ Updated to reflect the new format
+  timerSpan.textContent = 50; // ⬅️ MODIFIED: default timer value
   correctLetters = [];
   wrongLetters = [];
   clearCanvas();
@@ -228,6 +239,7 @@ restartBtn.addEventListener('click', () => {
   wordDisplay.textContent = '';
   wrongLettersSpan.textContent = '';
   attemptsSpan.textContent = maxAttempts;
+  document.body.style.backgroundColor = ''; // ⬅️ reset background
 });
 
 // Theme Toggle
