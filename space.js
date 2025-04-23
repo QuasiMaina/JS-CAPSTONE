@@ -4,7 +4,7 @@ let correctLetters = [];
 let wrongLetters = [];
 let level = 0;
 let score = 0;
-let time = 30; // ⬅️ MODIFIED to 30s
+let time = 30; 
 let timerInterval;
 const maxAttempts = 6;
 
