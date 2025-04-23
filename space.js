@@ -1,12 +1,10 @@
-// === Cleaned & Updated JavaScript for Hangman ===
-
 // Game state variables
 let selectedWord = '';
 let correctLetters = [];
 let wrongLetters = [];
 let level = 0;
 let score = 0;
-let time = 50; // ⬅️ MODIFIED
+let time = 45; // ⬅️ MODIFIED
 let timerInterval;
 const maxAttempts = 6;
 
@@ -71,27 +69,28 @@ function startGame() {
   generateKeyboard();
   clearCanvas();
   resetTimer();
-  document.body.style.backgroundColor = ''; // ⬅️ ADDED: reset bg
+  document.body.style.backgroundColor = ''; // ⬅️ Reset bg
 }
 
 function resetTimer() {
   clearInterval(timerInterval);
-  time = 50; // ⬅️ MODIFIED
+  time = 45;
   timerSpan.textContent = time;
+  document.body.style.backgroundColor = ''; // Reset background
   timerInterval = setInterval(() => {
     time--;
     timerSpan.textContent = time;
 
-    // Darken background at 2 seconds
-    if (time <= 2 && time > 0) {
-      document.body.style.backgroundColor = `rgba(0, 0, 0, ${1 - time / 2})`; // ⬅️ ADDED
+    // Make screen pitch black at 2 seconds
+    if (time === 2) {
+      document.body.style.backgroundColor = 'black';
     }
 
     // Flash at 0
     if (time === 0) {
       clearInterval(timerInterval);
-      flashScreen(); // ⬅️ ADDED
-      document.body.style.backgroundColor = ''; // ⬅️ ADDED: reset background
+      flashScreen();
+      document.body.style.backgroundColor = ''; // Reset after flash
       message.textContent = `⏰ Time’s up! ${getRandomRoast()} Word was: ${selectedWord}`;
       disableKeyboard();
     }
@@ -99,8 +98,8 @@ function resetTimer() {
 }
 
 function flashScreen() {
-  document.body.classList.add('flash'); // ⬅️ ADDED
-  setTimeout(() => document.body.classList.remove('flash'), 300); // ⬅️ ADDED
+  document.body.classList.add('flash');
+  setTimeout(() => document.body.classList.remove('flash'), 300);
 }
 
 function updateDisplay() {
@@ -243,7 +242,7 @@ restartBtn.addEventListener('click', () => {
   wordDisplay.textContent = '';
   wrongLettersSpan.textContent = '';
   attemptsSpan.textContent = maxAttempts;
-  document.body.style.backgroundColor = ''; // ⬅️ ADDED
+  document.body.style.backgroundColor = ''; // Reset background
 });
 
 // Theme Toggle
