@@ -81,26 +81,42 @@ function resetTimer() {
   time = totalTime;
   timerSpan.textContent = time;
 
-  // === ADDED: Reset overlay opacity ===
-  if (darkOverlay) darkOverlay.style.opacity = 0;
+  if (darkOverlay) {
+    darkOverlay.style.opacity = 0;
+    darkOverlay.style.backgroundColor = 'black'; // reset to black
+  }
 
   timerInterval = setInterval(() => {
     time--;
     timerSpan.textContent = time;
 
-    // === Gradually darken screen ===
+    // === Darkness ramps up until 2 seconds left ===
     if (darkOverlay) {
-      const darkness = 1 - time / totalTime;
-      darkOverlay.style.opacity = Math.min(darkness, 0.9);
+      if (time > 2) {
+        const maxDarkness = 1;
+        const rampTime = totalTime - 2;
+        const elapsed = totalTime - time;
+        const darkness = Math.min((elapsed / rampTime) * maxDarkness, maxDarkness);
+        darkOverlay.style.opacity = darkness;
+        darkOverlay.style.backgroundColor = 'black';
+      } else if (time === 0) {
+        // === Dramatic flash ===
+        darkOverlay.style.transition = 'none'; // reset transition for instant flash
+        darkOverlay.style.backgroundColor = 'white';
+        darkOverlay.style.opacity = 1;
+
+        // Then fade it out after flash
+        setTimeout(() => {
+          darkOverlay.style.transition = 'opacity 1s ease-in-out';
+          darkOverlay.style.opacity = 0;
+        }, 200); // quick flash duration
+      }
     }
 
     if (time <= 0) {
       clearInterval(timerInterval);
       message.textContent = `⏰ Time’s up! ${getRandomRoast()} Word was: ${selectedWord}`;
       disableKeyboard();
-
-      // === Final full darkness ===
-      if (darkOverlay) darkOverlay.style.opacity = 1;
     }
   }, 1000);
 }
