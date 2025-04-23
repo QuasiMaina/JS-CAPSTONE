@@ -4,14 +4,9 @@ let correctLetters = [];
 let wrongLetters = [];
 let level = 0;
 let score = 0;
-let time = 30; 
+let time = 30;
 let timerInterval;
 const maxAttempts = 6;
-
-// Audio Setup 🔊
-const tickSound = new Audio('ticking sound.mp3'); // 
-tickSound.loop = true;
-tickSound.volume = 0; // Start silent
 
 // DOM Elements
 const canvas = document.getElementById('hangman-canvas');
@@ -26,6 +21,14 @@ const timerSpan = document.getElementById('timer');
 const startBtn = document.getElementById('start-btn');
 const restartBtn = document.getElementById('restart-btn');
 const toggleBtn = document.getElementById('toggle-theme');
+
+const roastPopup = document.getElementById('roast-popup');
+const popupRoast = document.getElementById('popup-roast');
+const closePopup = document.getElementById('close-popup');
+
+closePopup.addEventListener('click', () => {
+  roastPopup.classList.add('hidden');
+});
 
 const wordLevels = [
   ['cat', 'sun', 'eat', 'dog'],
@@ -73,53 +76,42 @@ function startGame() {
   message.textContent = '';
   generateKeyboard();
   clearCanvas();
-  document.body.style.backgroundColor = '';
   resetTimer();
+  document.body.style.backgroundColor = '';
 }
 
 function resetTimer() {
   clearInterval(timerInterval);
-  time = 30; // ⬅️ MODIFIED
-  tickSound.pause();
-  tickSound.currentTime = 0;
-  tickSound.volume = 0;
+  time = 30;
   timerSpan.textContent = time;
-
   timerInterval = setInterval(() => {
     time--;
     timerSpan.textContent = time;
 
-    // Ticking logic 🔊
-    if (time <= 20 && time > 1) {
-      if (tickSound.paused) tickSound.play();
-      tickSound.volume = (1 - (time - 3) / 17); // from 0 at 20s to 1 at 3s
+    if (time < 23 && time >= 3) {
+      let darkness = Math.min(1, (23 - time) / 20);
+      document.body.style.backgroundColor = `rgba(0, 0, 0, ${darkness})`;
+      keyboard.style.opacity = 1 - darkness;
+      canvas.style.opacity = 1 - darkness;
     }
 
-    if (time === 1) {
-      tickSound.volume = 0;
-      tickSound.pause();
-      document.body.style.backgroundColor = '#000'; // PITCH BLACK
-      keyboard.style.opacity = '0';
-      canvas.style.opacity = '0';
+    if (time <= 2 && time > 0) {
+      document.body.style.backgroundColor = 'black';
+      keyboard.style.opacity = 0;
+      canvas.style.opacity = 0;
     }
 
-    // Gradual darkening from start
-    if (time > 2) {
-      const darkness = Math.min(1, (30 - time) / 28); // darkens gradually
-      const darkVal = Math.floor(255 * (1 - darkness));
-      document.body.style.backgroundColor = `rgb(${darkVal}, ${darkVal}, ${darkVal})`;
-      keyboard.style.opacity = `${1 - darkness}`;
-      canvas.style.opacity = `${1 - darkness}`;
-    }
-
-    // Flash at 0
     if (time === 0) {
       clearInterval(timerInterval);
       flashScreen();
       document.body.style.backgroundColor = '';
-      keyboard.style.opacity = '1';
-      canvas.style.opacity = '1';
-      message.textContent = `⏰ Time’s up! ${getRandomRoast()} Word was: ${selectedWord}`;
+      keyboard.style.opacity = 1;
+      canvas.style.opacity = 1;
+
+      const roast = getRandomRoast();
+      popupRoast.textContent = `⏰ Time’s up! ${roast} Word was: ${selectedWord}`;
+      roastPopup.classList.remove('hidden');
+
       disableKeyboard();
     }
   }, 1000);
@@ -141,7 +133,11 @@ function updateDisplay() {
 
 function generateKeyboard() {
   keyboard.innerHTML = '';
-  const layout = ['QWERTYUIOP', 'ASDFGHJKL', 'ZXCVBNM'];
+  const layout = [
+    'QWERTYUIOP',
+    'ASDFGHJKL',
+    'ZXCVBNM'
+  ];
   layout.forEach(row => {
     const rowDiv = document.createElement('div');
     rowDiv.classList.add('keyboard-row');
@@ -180,14 +176,12 @@ function checkGameStatus() {
     level++;
     disableKeyboard();
     clearInterval(timerInterval);
-    tickSound.pause();
     setTimeout(startGame, 1500);
   }
   if (wrongLetters.length >= maxAttempts) {
-    message.textContent = `💀 Loser! ${getRandomRoast()} Word was: ${selectedWord}`;
+    message.textContent = `💀 You Lost! ${getRandomRoast()} Word was: ${selectedWord}`;
     disableKeyboard();
     clearInterval(timerInterval);
-    tickSound.pause();
   }
 }
 
@@ -213,12 +207,12 @@ function drawBase() {
 
 function drawHangman(wrongCount) {
   const animations = [
-    () => ctx.arc(130, 60, 20, 0, Math.PI * 2), // head
-    () => animateLine(130, 80, 130, 140),      // body
-    () => animateLine(130, 100, 100, 120),     // left arm
-    () => animateLine(130, 100, 160, 120),     // right arm
-    () => animateLine(130, 140, 100, 180),     // left leg
-    () => animateLine(130, 140, 160, 180)      // right leg
+    () => ctx.arc(130, 60, 20, 0, Math.PI * 2),
+    () => animateLine(130, 80, 130, 140),
+    () => animateLine(130, 100, 100, 120),
+    () => animateLine(130, 100, 160, 120),
+    () => animateLine(130, 140, 100, 180),
+    () => animateLine(130, 140, 160, 180)
   ];
   if (wrongCount > 0 && wrongCount <= animations.length) {
     ctx.beginPath();
@@ -241,7 +235,6 @@ function animateLine(x1, y1, x2, y2) {
   step();
 }
 
-// Start and Restart
 startBtn.addEventListener('click', () => {
   score = 0;
   level = 0;
@@ -257,7 +250,6 @@ restartBtn.addEventListener('click', () => {
   restartBtn.style.display = 'none';
   startBtn.style.display = 'inline-block';
   clearInterval(timerInterval);
-  tickSound.pause();
   score = 0;
   level = 0;
   scoreSpan.textContent = score;
@@ -270,11 +262,8 @@ restartBtn.addEventListener('click', () => {
   wrongLettersSpan.textContent = '';
   attemptsSpan.textContent = maxAttempts;
   document.body.style.backgroundColor = '';
-  canvas.style.opacity = '1';
-  keyboard.style.opacity = '1';
 });
 
-// Theme Toggle
 toggleBtn.addEventListener('click', () => {
   document.body.classList.toggle('dark-mode');
   toggleBtn.textContent = document.body.classList.contains('dark-mode') ? '🌙' : '🌞';
