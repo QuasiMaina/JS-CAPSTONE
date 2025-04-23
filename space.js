@@ -1,12 +1,16 @@
+// === Cleaned & Updated JavaScript for Hangman ===
+
+// Game state variables
 let selectedWord = '';
 let correctLetters = [];
 let wrongLetters = [];
 let level = 0;
 let score = 0;
-let time = 45;
+let time = 50; // ⬅️ MODIFIED
 let timerInterval;
 const maxAttempts = 6;
 
+// DOM Elements
 const canvas = document.getElementById('hangman-canvas');
 const ctx = canvas.getContext('2d');
 const wordDisplay = document.getElementById('word');
@@ -19,22 +23,6 @@ const timerSpan = document.getElementById('timer');
 const startBtn = document.getElementById('start-btn');
 const restartBtn = document.getElementById('restart-btn');
 const toggleBtn = document.getElementById('toggle-theme');
-const overlay = document.createElement('div'); // ✅ Darkness overlay element
-
-// ✅ Style for darkness overlay
-overlay.id = 'dark-overlay';
-Object.assign(overlay.style, {
-  position: 'fixed',
-  top: '0',
-  left: '0',
-  width: '100%',
-  height: '100%',
-  backgroundColor: 'rgba(0, 0, 0, 0)',
-  pointerEvents: 'none',
-  zIndex: '999',
-  transition: 'background-color 0.3s ease'
-});
-document.body.appendChild(overlay);
 
 const wordLevels = [
   ['cat', 'sun', 'eat', 'dog'],
@@ -83,33 +71,36 @@ function startGame() {
   generateKeyboard();
   clearCanvas();
   resetTimer();
+  document.body.style.backgroundColor = ''; // ⬅️ ADDED: reset bg
 }
 
 function resetTimer() {
   clearInterval(timerInterval);
-  time = 45;
-  timerSpan.textContent = `${time}s`;
-  updateDarkness(); // ✅ Initialize darkness
-
+  time = 50; // ⬅️ MODIFIED
+  timerSpan.textContent = time;
   timerInterval = setInterval(() => {
     time--;
-    timerSpan.textContent = `${time}s`;
-    updateDarkness(); // ✅ Adjust darkness as time drops
+    timerSpan.textContent = time;
 
-    if (time <= 0) {
+    // Darken background at 2 seconds
+    if (time <= 2 && time > 0) {
+      document.body.style.backgroundColor = `rgba(0, 0, 0, ${1 - time / 2})`; // ⬅️ ADDED
+    }
+
+    // Flash at 0
+    if (time === 0) {
       clearInterval(timerInterval);
+      flashScreen(); // ⬅️ ADDED
+      document.body.style.backgroundColor = ''; // ⬅️ ADDED: reset background
       message.textContent = `⏰ Time’s up! ${getRandomRoast()} Word was: ${selectedWord}`;
       disableKeyboard();
-      overlay.style.backgroundColor = 'rgba(0, 0, 0, 0)'; // ✅ Reset darkness
     }
   }, 1000);
 }
 
-// ✅ Darkness function
-function updateDarkness() {
-  const ratio = Math.max(0, (45 - time) / 45);
-  const opacity = ratio * 0.8; // up to 80% darkness
-  overlay.style.backgroundColor = `rgba(0, 0, 0, ${opacity.toFixed(2)})`;
+function flashScreen() {
+  document.body.classList.add('flash'); // ⬅️ ADDED
+  setTimeout(() => document.body.classList.remove('flash'), 300); // ⬅️ ADDED
 }
 
 function updateDisplay() {
@@ -225,6 +216,7 @@ function animateLine(x1, y1, x2, y2) {
   step();
 }
 
+// Start and Restart
 startBtn.addEventListener('click', () => {
   score = 0;
   level = 0;
@@ -243,7 +235,7 @@ restartBtn.addEventListener('click', () => {
   score = 0;
   level = 0;
   scoreSpan.textContent = score;
-  timerSpan.textContent = `45s`;
+  timerSpan.textContent = 50; // ⬅️ MODIFIED
   correctLetters = [];
   wrongLetters = [];
   clearCanvas();
@@ -251,9 +243,10 @@ restartBtn.addEventListener('click', () => {
   wordDisplay.textContent = '';
   wrongLettersSpan.textContent = '';
   attemptsSpan.textContent = maxAttempts;
-  overlay.style.backgroundColor = 'rgba(0, 0, 0, 0)'; // ✅ Reset overlay
+  document.body.style.backgroundColor = ''; // ⬅️ ADDED
 });
 
+// Theme Toggle
 toggleBtn.addEventListener('click', () => {
   document.body.classList.toggle('dark-mode');
   toggleBtn.textContent = document.body.classList.contains('dark-mode') ? '🌙' : '🌞';
