@@ -5,7 +5,7 @@ let wrongLetters = [];
 let level = 0;
 let score = 0;
 const totalTime = 50;
-let timerInterval;
+let time = totalTime;
 const maxAttempts = 6;
 
 // DOM Elements
