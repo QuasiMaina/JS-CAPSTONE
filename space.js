@@ -1,5 +1,6 @@
-//  Gradual Darkening and Tick Audio ===
+// === Cleaned & Updated JavaScript for Hangman with Ticking Clock ===
 
+// Game state variables
 let selectedWord = '';
 let correctLetters = [];
 let wrongLetters = [];
@@ -9,6 +10,12 @@ let time = 30;
 let timerInterval;
 const maxAttempts = 6;
 
+// Audio setup
+const tickSound = new Audio('ticking sound.mp3');
+tickSound.loop = true;
+tickSound.volume = 0;
+
+// DOM Elements
 const canvas = document.getElementById('hangman-canvas');
 const ctx = canvas.getContext('2d');
 const wordDisplay = document.getElementById('word');
@@ -22,27 +29,69 @@ const startBtn = document.getElementById('start-btn');
 const restartBtn = document.getElementById('restart-btn');
 const toggleBtn = document.getElementById('toggle-theme');
 
+// Create popup
+const popup = document.createElement('div');
+popup.className = 'popup';
+popup.style.display = 'none';
+popup.style.position = 'fixed';
+popup.style.top = '50%';
+popup.style.left = '50%';
+popup.style.transform = 'translate(-50%, -50%)';
+popup.style.backgroundColor = 'rgba(0, 0, 0, 0.9)';
+popup.style.color = 'white';
+popup.style.padding = '2rem';
+popup.style.borderRadius = '12px';
+popup.style.boxShadow = '0 0 20px rgba(255,255,255,0.2)';
+popup.style.zIndex = '9999';
+popup.style.textAlign = 'center';
+popup.style.maxWidth = '300px';
+popup.style.fontSize = '1.2rem';
+popup.style.transition = 'opacity 0.3s ease';
+popup.innerHTML = '<p></p><button>OK</button>';
+document.body.appendChild(popup);
+const popupText = popup.querySelector('p');
+const popupBtn = popup.querySelector('button');
+popupBtn.style.marginTop = '1rem';
+popupBtn.addEventListener('click', () => {
+  popup.style.display = 'none';
+});
+
+// Roast logic
+const allRoasts = [
+  "Haujui kuguess?", "Did you try turning your brain on?",
+  "Haujui hii?", "You're the reason the hangman lost his job.",
+  "Hope you’re better at life than this game.",
+  "English not Englishing?", "Oof. That word was easier than breathing.",
+  "If bad guesses were art, you'd be Picasso.",
+  "Even autocorrect gave up on you.",
+  "You spelled disaster correctly at least."
+];
+let roastQueue = shuffleArray([...allRoasts]);
+
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+function getRandomRoast() {
+  if (roastQueue.length === 0) roastQueue = shuffleArray([...allRoasts]);
+  return roastQueue.pop();
+}
+
+function showPopup(message) {
+  popupText.innerHTML = message;
+  popup.style.display = 'block';
+}
+
 const wordLevels = [
   ['cat', 'sun', 'eat', 'dog'],
   ['horse', 'apple', 'grape', 'plane'],
   ['wycombe', 'wizard', 'rhythm', 'jumble'],
-  ['awkward', 'cryptic', 'dwarves', 'xylophone']
+  ['awkward', 'cryptic', 'dwarves', 'xylophone'],
 ];
-
-const popup = document.createElement('div');
-popup.className = 'popup-box';
-document.body.appendChild(popup);
-popup.style.display = 'none';
-
-const tickSound = new Audio('ticking sound.mp3');
-tickSound.loop = true;
-tickSound.volume = 0;
-
-function showPopup(text) {
-  popup.textContent = text;
-  popup.style.display = 'block';
-  setTimeout(() => popup.style.display = 'none', 3500);
-}
 
 function startGame() {
   if (level >= wordLevels.length) level = wordLevels.length - 1;
@@ -57,48 +106,54 @@ function startGame() {
   clearCanvas();
   resetTimer();
   document.body.style.backgroundColor = '';
-  popup.style.display = 'none';
 }
 
 function resetTimer() {
   clearInterval(timerInterval);
   time = 30;
   timerSpan.textContent = time;
+  tickSound.pause();
+  tickSound.currentTime = 0;
   tickSound.volume = 0;
+
   timerInterval = setInterval(() => {
     time--;
     timerSpan.textContent = time;
 
-    // Gradual darkening from 23s to 1s
+    // Start ticking at 23s
+    if (time === 23) {
+      tickSound.play().catch(() => {}); // Try play, ignore error if blocked
+    }
+
+    // Volume ramping from 23s to 3s
     if (time <= 23 && time >= 1) {
-      const intensity = (23 - time) / 22;
-      document.body.style.backgroundColor = `rgba(0, 0, 0, ${intensity})`;
+      const volume = (23 - time) / 20; // Goes from 0 to ~1
+      tickSound.volume = Math.min(1, volume);
     }
 
-    // Tick audio logic
-    if (time <= 23 && time >= 3) {
-      const volumeLevel = (23 - time) / 20;
-      tickSound.volume = Math.min(1, volumeLevel);
-      if (tickSound.paused) {
-        tickSound.play().catch(() => {});
-      }
-    }
-
-    // Silence tick at 1
+    // Silence at 1s
     if (time === 1) {
       tickSound.pause();
       tickSound.currentTime = 0;
+      document.body.style.backgroundColor = 'black';
     }
 
-    // Flash and show popup at 0
+    // Gradual darkening from 10s down
+    if (time <= 10 && time > 2) {
+      const intensity = (10 - time) / 10;
+      document.body.style.backgroundColor = `rgba(0, 0, 0, ${intensity})`;
+    }
+
+    // Time’s up
     if (time === 0) {
       clearInterval(timerInterval);
       flashScreen();
       setTimeout(() => {
-        showPopup(`⏰ Time’s up! The word was: ${selectedWord}`);
+        document.body.style.backgroundColor = '';
+        disableKeyboard();
+        const roast = getRandomRoast();
+        showPopup(`⏰ Time’s up!<br><br>${roast}<br><br>Word was: <strong>${selectedWord}</strong>`);
       }, 300);
-      document.body.style.backgroundColor = '';
-      disableKeyboard();
     }
   }, 1000);
 }
@@ -119,11 +174,7 @@ function updateDisplay() {
 
 function generateKeyboard() {
   keyboard.innerHTML = '';
-  const layout = [
-    'QWERTYUIOP',
-    'ASDFGHJKL',
-    'ZXCVBNM'
-  ];
+  const layout = ['QWERTYUIOP', 'ASDFGHJKL', 'ZXCVBNM'];
   layout.forEach(row => {
     const rowDiv = document.createElement('div');
     rowDiv.classList.add('keyboard-row');
@@ -141,14 +192,11 @@ function generateKeyboard() {
 
 function handleGuess(letter) {
   if (selectedWord.includes(letter)) {
-    if (!correctLetters.includes(letter)) {
-      correctLetters.push(letter);
-    }
+    if (!correctLetters.includes(letter)) correctLetters.push(letter);
   } else {
     if (!wrongLetters.includes(letter)) {
       wrongLetters.push(letter);
       drawHangman(wrongLetters.length);
-      showPopup(`Wrong! Attempts left: ${maxAttempts - wrongLetters.length}`);
     }
   }
   updateDisplay();
@@ -157,27 +205,27 @@ function handleGuess(letter) {
 
 function checkGameStatus() {
   if (!selectedWord.split('').some(letter => !correctLetters.includes(letter))) {
-    message.textContent = '🎉 You Won!';
     score += 10;
     scoreSpan.textContent = score;
     level++;
     disableKeyboard();
     clearInterval(timerInterval);
+    tickSound.pause();
     setTimeout(startGame, 1500);
   }
+
   if (wrongLetters.length >= maxAttempts) {
-    disableKeyboard();
     clearInterval(timerInterval);
-    flashScreen();
-    setTimeout(() => {
-      showPopup(`💀 You Lost! The word was: ${selectedWord}`);
-    }, 300);
+    tickSound.pause();
+    disableKeyboard();
+    const roast = getRandomRoast();
+    showPopup(`💀 You Lost!<br><br>${roast}<br><br>Word was: <strong>${selectedWord}</strong>`);
   }
 }
 
 function disableKeyboard() {
   const buttons = keyboard.querySelectorAll('button');
-  buttons.forEach(btn => btn.disabled = true);
+  buttons.forEach(btn => (btn.disabled = true));
 }
 
 function clearCanvas() {
@@ -197,12 +245,12 @@ function drawBase() {
 
 function drawHangman(wrongCount) {
   const animations = [
-    () => ctx.arc(130, 60, 20, 0, Math.PI * 2),
-    () => animateLine(130, 80, 130, 140),
-    () => animateLine(130, 100, 100, 120),
-    () => animateLine(130, 100, 160, 120),
-    () => animateLine(130, 140, 100, 180),
-    () => animateLine(130, 140, 160, 180)
+    () => ctx.arc(130, 60, 20, 0, Math.PI * 2), // head
+    () => animateLine(130, 80, 130, 140),      // body
+    () => animateLine(130, 100, 100, 120),     // left arm
+    () => animateLine(130, 100, 160, 120),     // right arm
+    () => animateLine(130, 140, 100, 180),     // left leg
+    () => animateLine(130, 140, 160, 180)      // right leg
   ];
   if (wrongCount > 0 && wrongCount <= animations.length) {
     ctx.beginPath();
@@ -241,7 +289,6 @@ restartBtn.addEventListener('click', () => {
   startBtn.style.display = 'inline-block';
   clearInterval(timerInterval);
   tickSound.pause();
-  tickSound.currentTime = 0;
   score = 0;
   level = 0;
   scoreSpan.textContent = score;
@@ -254,7 +301,6 @@ restartBtn.addEventListener('click', () => {
   wrongLettersSpan.textContent = '';
   attemptsSpan.textContent = maxAttempts;
   document.body.style.backgroundColor = '';
-  popup.style.display = 'none';
 });
 
 toggleBtn.addEventListener('click', () => {
