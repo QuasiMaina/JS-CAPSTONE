@@ -1,11 +1,12 @@
+// === Cleaned & Updated JavaScript for Hangman ===
+
 // Game state variables
-const totalTime = 50; // ⬅️ ADDED: Total timer duration
-let time = totalTime; // ⬅️ MODIFIED: Initial time uses totalTime
 let selectedWord = '';
 let correctLetters = [];
 let wrongLetters = [];
 let level = 0;
 let score = 0;
+let time = 50; // ⬅️ MODIFIED
 let timerInterval;
 const maxAttempts = 6;
 
@@ -70,62 +71,36 @@ function startGame() {
   generateKeyboard();
   clearCanvas();
   resetTimer();
+  document.body.style.backgroundColor = ''; // ⬅️ ADDED: reset bg
 }
 
 function resetTimer() {
   clearInterval(timerInterval);
-  time = totalTime; // ⬅️ MODIFIED
-  timerSpan.textContent = totalTime; // ⬅️ MODIFIED
-  document.body.style.backgroundColor = ''; // ⬅️ ADDED: reset background
+  time = 50; // ⬅️ MODIFIED
+  timerSpan.textContent = time;
   timerInterval = setInterval(() => {
     time--;
     timerSpan.textContent = time;
-    updateDarkness(); // ⬅️ ADDED
-    drawRadialTimer(); // ⬅️ ADDED
-    if (time <= 0) {
+
+    // Darken background at 2 seconds
+    if (time <= 2 && time > 0) {
+      document.body.style.backgroundColor = `rgba(0, 0, 0, ${1 - time / 2})`; // ⬅️ ADDED
+    }
+
+    // Flash at 0
+    if (time === 0) {
       clearInterval(timerInterval);
-      dramaticFlash(); // ⬅️ ADDED
-      setTimeout(() => {
-        document.body.style.backgroundColor = '';
-        message.textContent = `⏰ Time’s up! ${getRandomRoast()} Word was: ${selectedWord}`;
-        disableKeyboard();
-      }, 200);
+      flashScreen(); // ⬅️ ADDED
+      document.body.style.backgroundColor = ''; // ⬅️ ADDED: reset background
+      message.textContent = `⏰ Time’s up! ${getRandomRoast()} Word was: ${selectedWord}`;
+      disableKeyboard();
     }
   }, 1000);
 }
 
-function updateDarkness() { // ⬅️ ADDED
-  const darkness = Math.max(0, Math.min(1, 1 - (time - 2) / (totalTime - 2)));
-  document.body.style.backgroundColor = `rgba(0, 0, 0, ${darkness * 0.8})`;
-}
-
-function dramaticFlash() { // ⬅️ ADDED
-  document.body.style.backgroundColor = '#fff';
-  setTimeout(() => document.body.style.backgroundColor = '#000', 100);
-}
-
-function drawRadialTimer() { // ⬅️ ADDED
-  const radius = 30;
-  const centerX = canvas.width - 50;
-  const centerY = 50;
-  const startAngle = -0.5 * Math.PI;
-  const endAngle = startAngle + (2 * Math.PI * (time / totalTime));
-
-  ctx.clearRect(canvas.width - 100, 0, 100, 100);
-
-  // background circle
-  ctx.beginPath();
-  ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
-  ctx.strokeStyle = '#ccc';
-  ctx.lineWidth = 5;
-  ctx.stroke();
-
-  // timer arc
-  ctx.beginPath();
-  ctx.arc(centerX, centerY, radius, startAngle, endAngle);
-  ctx.strokeStyle = '#f00';
-  ctx.lineWidth = 5;
-  ctx.stroke();
+function flashScreen() {
+  document.body.classList.add('flash'); // ⬅️ ADDED
+  setTimeout(() => document.body.classList.remove('flash'), 300); // ⬅️ ADDED
 }
 
 function updateDisplay() {
@@ -260,7 +235,7 @@ restartBtn.addEventListener('click', () => {
   score = 0;
   level = 0;
   scoreSpan.textContent = score;
-  timerSpan.textContent = totalTime; // ⬅️ MODIFIED
+  timerSpan.textContent = 50; // ⬅️ MODIFIED
   correctLetters = [];
   wrongLetters = [];
   clearCanvas();
@@ -268,6 +243,7 @@ restartBtn.addEventListener('click', () => {
   wordDisplay.textContent = '';
   wrongLettersSpan.textContent = '';
   attemptsSpan.textContent = maxAttempts;
+  document.body.style.backgroundColor = ''; // ⬅️ ADDED
 });
 
 // Theme Toggle
