@@ -1,3 +1,5 @@
+// === Cleaned & Updated JavaScript for Hangman ===
+
 // Game state variables
 let selectedWord = '';
 let correctLetters = [];
@@ -69,28 +71,33 @@ function startGame() {
   generateKeyboard();
   clearCanvas();
   resetTimer();
-  document.body.style.backgroundColor = ''; // ⬅️ Reset bg
+  document.body.style.backgroundColor = 'rgba(0, 0, 0, 0.05)'; // ⬅️ ADDED gradual start
 }
 
 function resetTimer() {
   clearInterval(timerInterval);
-  time = 45;
+  time = 45; // ⬅️ MODIFIED
   timerSpan.textContent = time;
-  document.body.style.backgroundColor = ''; // Reset background
   timerInterval = setInterval(() => {
     time--;
     timerSpan.textContent = time;
 
-    // Make screen pitch black at 2 seconds
-    if (time === 2) {
-      document.body.style.backgroundColor = 'black';
+    // Gradually darken the screen as time decreases ⬇️⬇️⬇️
+    if (time <= 45 && time > 2) {
+      const darkness = (45 - time) / 45; // Value between 0 and 1
+      document.body.style.backgroundColor = `rgba(0, 0, 0, ${darkness})`; // ⬅️ ADDED
     }
 
-    // Flash at 0
+    // At 2 seconds left, screen becomes pitch black
+    if (time === 2) {
+      document.body.style.backgroundColor = 'black'; // ⬅️ ADDED
+    }
+
+    // At 0, flash and reset background
     if (time === 0) {
       clearInterval(timerInterval);
-      flashScreen();
-      document.body.style.backgroundColor = ''; // Reset after flash
+      flashScreen(); // ⬅️ FLASH EFFECT
+      document.body.style.backgroundColor = ''; // ⬅️ RESET BACKGROUND
       message.textContent = `⏰ Time’s up! ${getRandomRoast()} Word was: ${selectedWord}`;
       disableKeyboard();
     }
@@ -98,8 +105,8 @@ function resetTimer() {
 }
 
 function flashScreen() {
-  document.body.classList.add('flash');
-  setTimeout(() => document.body.classList.remove('flash'), 300);
+  document.body.classList.add('flash'); // ⬅️ ADDED
+  setTimeout(() => document.body.classList.remove('flash'), 300); // ⬅️ ADDED
 }
 
 function updateDisplay() {
@@ -234,7 +241,7 @@ restartBtn.addEventListener('click', () => {
   score = 0;
   level = 0;
   scoreSpan.textContent = score;
-  timerSpan.textContent = 50; // ⬅️ MODIFIED
+  timerSpan.textContent = 45; // ⬅️ MODIFIED
   correctLetters = [];
   wrongLetters = [];
   clearCanvas();
@@ -242,7 +249,7 @@ restartBtn.addEventListener('click', () => {
   wordDisplay.textContent = '';
   wrongLettersSpan.textContent = '';
   attemptsSpan.textContent = maxAttempts;
-  document.body.style.backgroundColor = ''; // Reset background
+  document.body.style.backgroundColor = ''; // ⬅️ RESET BG
 });
 
 // Theme Toggle
