@@ -84,9 +84,10 @@ function resetTimer() {
 
     // Gradually darken the screen as time decreases ⬇️⬇️⬇️
     if (time <= 45 && time > 2) {
-      const darkness = (45 - time) / 45; // Value between 0 and 1
-      document.body.style.backgroundColor = `rgba(0, 0, 0, ${darkness})`; // ⬅️ ADDED
-    }
+  // Exponential darkness: gets darker much faster near 2s
+  const darkness = Math.pow((45 - time) / 43, 2); // Squared for steeper ramp
+  document.body.style.backgroundColor = `rgba(0, 0, 0, ${Math.min(darkness, 1)})`;
+}
 
     // At 2 seconds left, screen becomes pitch black
     if (time === 2) {
