@@ -61,8 +61,8 @@ const allRoasts = [
   "Oof. That word was easier than breathing.",
   "I'm genuinely disappointed in you.",
   "Surely, na ati wewe ni grown up...",
-  "JUST. SMH!."
-  "usi jali kamum, at least wewe ni mrembo."
+  "JUST. SMH!",
+  "usi jali kamum, at least wewe ni mrembo.",
 ];
 let roastQueue = shuffleArray([...allRoasts]);
 
