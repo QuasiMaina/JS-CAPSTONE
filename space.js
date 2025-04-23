@@ -1,4 +1,3 @@
-// === Combined JavaScript for Hangman with Timer, Roasts, and Animations ===
 
 let selectedWord = '';
 let correctLetters = [];
@@ -181,17 +180,24 @@ function generateKeyboard() {
 }
 
 function handleGuess(letter) {
+  const button = keyboard.querySelector(`button[data-letter="${letter}"]`);
+  button.disabled = true;
+
   if (selectedWord.includes(letter)) {
+    button.classList.add('correct');
     if (!correctLetters.includes(letter)) correctLetters.push(letter);
   } else {
+    button.classList.add('wrong');
     if (!wrongLetters.includes(letter)) {
       wrongLetters.push(letter);
       drawHangman(wrongLetters.length);
     }
   }
+
   updateDisplay();
   checkGameStatus();
 }
+
 
 function checkGameStatus() {
   if (!selectedWord.split('').some(letter => !correctLetters.includes(letter))) {
