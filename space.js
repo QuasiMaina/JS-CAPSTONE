@@ -121,15 +121,19 @@ function resetTimer() {
       const volume = (23 - time) / 20;
       tickSound.volume = Math.min(1, volume);
     }
+
+    // Gradual darkness 
+    if (time <= 28 && time >= 1) {
+      const darkness = (28 - time) / 27; // 0 at 28s, 1 at 1s
+      document.body.style.backgroundColor = `rgba(0, 0, 0, ${darkness})`;
+    }
+
     if (time === 1) {
       tickSound.pause();
       tickSound.currentTime = 0;
-      document.body.style.backgroundColor = 'black';
+      document.body.style.backgroundColor = 'rgba(0, 0, 0, 1)';
     }
-    if (time <= 10 && time > 2) {
-      const intensity = (10 - time) / 10;
-      document.body.style.backgroundColor = `rgba(0, 0, 0, ${intensity})`;
-    }
+
     if (time === 0) {
       clearInterval(timerInterval);
       flashScreen();
@@ -142,6 +146,7 @@ function resetTimer() {
     }
   }, 1000);
 }
+
 
 function flashScreen() {
   document.body.classList.add('flash');
