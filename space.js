@@ -1,4 +1,4 @@
-// === Cleaned & Updated JavaScript for Hangman ===
+// === Cleaned & Updated JavaScript for Hangman with Ticking Clock ===
 
 // Game state variables
 let selectedWord = '';
@@ -10,6 +10,11 @@ let time = 30;
 let timerInterval;
 const maxAttempts = 6;
 
+// Audio setup
+const tickSound = new Audio('ticking sound.mp3');
+tickSound.loop = true;
+tickSound.volume = 0;
+
 // DOM Elements
 const canvas = document.getElementById('hangman-canvas');
 const ctx = canvas.getContext('2d');
@@ -17,7 +22,7 @@ const wordDisplay = document.getElementById('word');
 const keyboard = document.getElementById('keyboard');
 const wrongLettersSpan = document.getElementById('wrong-letters');
 const attemptsSpan = document.getElementById('attempts');
-const message = document.getElementById('message'); // ← will no longer show roast/time
+const message = document.getElementById('message');
 const scoreSpan = document.getElementById('score');
 const timerSpan = document.getElementById('timer');
 const startBtn = document.getElementById('start-btn');
@@ -51,15 +56,12 @@ popupBtn.addEventListener('click', () => {
   popup.style.display = 'none';
 });
 
-// Roast data
+// Roast logic
 const allRoasts = [
-  "Haujui kuguess?",
-  "Did you try turning your brain on?",
-  "Haujui hii?",
-  "You're the reason the hangman lost his job.",
+  "Haujui kuguess?", "Did you try turning your brain on?",
+  "Haujui hii?", "You're the reason the hangman lost his job.",
   "Hope you’re better at life than this game.",
-  "English not Englishing?",
-  "Oof. That word was easier than breathing.",
+  "English not Englishing?", "Oof. That word was easier than breathing.",
   "If bad guesses were art, you'd be Picasso.",
   "Even autocorrect gave up on you.",
   "You spelled disaster correctly at least."
@@ -84,7 +86,6 @@ function showPopup(message) {
   popup.style.display = 'block';
 }
 
-// Word levels
 const wordLevels = [
   ['cat', 'sun', 'eat', 'dog'],
   ['horse', 'apple', 'grape', 'plane'],
@@ -111,23 +112,39 @@ function resetTimer() {
   clearInterval(timerInterval);
   time = 30;
   timerSpan.textContent = time;
+  tickSound.pause();
+  tickSound.currentTime = 0;
+  tickSound.volume = 0;
 
   timerInterval = setInterval(() => {
     time--;
     timerSpan.textContent = time;
 
-    // Gradual darkening
+    // Start ticking at 23s
+    if (time === 23) {
+      tickSound.play().catch(() => {}); // Try play, ignore error if blocked
+    }
+
+    // Volume ramping from 23s to 3s
+    if (time <= 23 && time >= 3) {
+      const volume = (23 - time) / 20; // Goes from 0 to ~1
+      tickSound.volume = Math.min(1, volume);
+    }
+
+    // Silence at 2s
+    if (time === 2) {
+      tickSound.pause();
+      tickSound.currentTime = 0;
+      document.body.style.backgroundColor = 'black';
+    }
+
+    // Gradual darkening from 10s down
     if (time <= 10 && time > 2) {
       const intensity = (10 - time) / 10;
       document.body.style.backgroundColor = `rgba(0, 0, 0, ${intensity})`;
     }
 
-    // Full darkness at 2s
-    if (time === 2) {
-      document.body.style.backgroundColor = 'black';
-    }
-
-    // Flash and popup at 0
+    // Time’s up
     if (time === 0) {
       clearInterval(timerInterval);
       flashScreen();
@@ -188,17 +205,18 @@ function handleGuess(letter) {
 
 function checkGameStatus() {
   if (!selectedWord.split('').some(letter => !correctLetters.includes(letter))) {
-    message.textContent = '🎉 You Won!';
     score += 10;
     scoreSpan.textContent = score;
     level++;
     disableKeyboard();
     clearInterval(timerInterval);
+    tickSound.pause();
     setTimeout(startGame, 1500);
   }
 
   if (wrongLetters.length >= maxAttempts) {
     clearInterval(timerInterval);
+    tickSound.pause();
     disableKeyboard();
     const roast = getRandomRoast();
     showPopup(`💀 You Lost!<br><br>${roast}<br><br>Word was: <strong>${selectedWord}</strong>`);
@@ -255,7 +273,6 @@ function animateLine(x1, y1, x2, y2) {
   step();
 }
 
-// Start and Restart
 startBtn.addEventListener('click', () => {
   score = 0;
   level = 0;
@@ -271,6 +288,7 @@ restartBtn.addEventListener('click', () => {
   restartBtn.style.display = 'none';
   startBtn.style.display = 'inline-block';
   clearInterval(timerInterval);
+  tickSound.pause();
   score = 0;
   level = 0;
   scoreSpan.textContent = score;
@@ -285,7 +303,6 @@ restartBtn.addEventListener('click', () => {
   document.body.style.backgroundColor = '';
 });
 
-// Theme Toggle
 toggleBtn.addEventListener('click', () => {
   document.body.classList.toggle('dark-mode');
   toggleBtn.textContent = document.body.classList.contains('dark-mode') ? '🌙' : '🌞';
