@@ -18,6 +18,9 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  background-color: rgb(91, 219, 236); 
+  padding: 10px;
+
 }
 
 .top-bar {
