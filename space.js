@@ -1,3 +1,5 @@
+// === Cleaned & Updated JavaScript for Hangman ===
+
 // Game state variables
 let selectedWord = '';
 let correctLetters = [];
@@ -15,28 +17,41 @@ const wordDisplay = document.getElementById('word');
 const keyboard = document.getElementById('keyboard');
 const wrongLettersSpan = document.getElementById('wrong-letters');
 const attemptsSpan = document.getElementById('attempts');
-const message = document.getElementById('message');
+const message = document.getElementById('message'); // ← will no longer show roast/time
 const scoreSpan = document.getElementById('score');
 const timerSpan = document.getElementById('timer');
 const startBtn = document.getElementById('start-btn');
 const restartBtn = document.getElementById('restart-btn');
 const toggleBtn = document.getElementById('toggle-theme');
 
-const roastPopup = document.getElementById('roast-popup');
-const popupRoast = document.getElementById('popup-roast');
-const closePopup = document.getElementById('close-popup');
-
-closePopup.addEventListener('click', () => {
-  roastPopup.classList.add('hidden');
+// Create popup
+const popup = document.createElement('div');
+popup.className = 'popup';
+popup.style.display = 'none';
+popup.style.position = 'fixed';
+popup.style.top = '50%';
+popup.style.left = '50%';
+popup.style.transform = 'translate(-50%, -50%)';
+popup.style.backgroundColor = 'rgba(0, 0, 0, 0.9)';
+popup.style.color = 'white';
+popup.style.padding = '2rem';
+popup.style.borderRadius = '12px';
+popup.style.boxShadow = '0 0 20px rgba(255,255,255,0.2)';
+popup.style.zIndex = '9999';
+popup.style.textAlign = 'center';
+popup.style.maxWidth = '300px';
+popup.style.fontSize = '1.2rem';
+popup.style.transition = 'opacity 0.3s ease';
+popup.innerHTML = '<p></p><button>OK</button>';
+document.body.appendChild(popup);
+const popupText = popup.querySelector('p');
+const popupBtn = popup.querySelector('button');
+popupBtn.style.marginTop = '1rem';
+popupBtn.addEventListener('click', () => {
+  popup.style.display = 'none';
 });
 
-const wordLevels = [
-  ['cat', 'sun', 'eat', 'dog'],
-  ['horse', 'apple', 'grape', 'plane'],
-  ['wycombe', 'wizard', 'rhythm', 'jumble'],
-  ['awkward', 'cryptic', 'dwarves', 'xylophone'],
-];
-
+// Roast data
 const allRoasts = [
   "Haujui kuguess?",
   "Did you try turning your brain on?",
@@ -49,7 +64,6 @@ const allRoasts = [
   "Even autocorrect gave up on you.",
   "You spelled disaster correctly at least."
 ];
-
 let roastQueue = shuffleArray([...allRoasts]);
 
 function shuffleArray(array) {
@@ -64,6 +78,19 @@ function getRandomRoast() {
   if (roastQueue.length === 0) roastQueue = shuffleArray([...allRoasts]);
   return roastQueue.pop();
 }
+
+function showPopup(message) {
+  popupText.innerHTML = message;
+  popup.style.display = 'block';
+}
+
+// Word levels
+const wordLevels = [
+  ['cat', 'sun', 'eat', 'dog'],
+  ['horse', 'apple', 'grape', 'plane'],
+  ['wycombe', 'wizard', 'rhythm', 'jumble'],
+  ['awkward', 'cryptic', 'dwarves', 'xylophone'],
+];
 
 function startGame() {
   if (level >= wordLevels.length) level = wordLevels.length - 1;
@@ -84,35 +111,32 @@ function resetTimer() {
   clearInterval(timerInterval);
   time = 30;
   timerSpan.textContent = time;
+
   timerInterval = setInterval(() => {
     time--;
     timerSpan.textContent = time;
 
-    if (time < 23 && time >= 3) {
-      let darkness = Math.min(1, (23 - time) / 20);
-      document.body.style.backgroundColor = `rgba(0, 0, 0, ${darkness})`;
-      keyboard.style.opacity = 1 - darkness;
-      canvas.style.opacity = 1 - darkness;
+    // Gradual darkening
+    if (time <= 10 && time > 2) {
+      const intensity = (10 - time) / 10;
+      document.body.style.backgroundColor = `rgba(0, 0, 0, ${intensity})`;
     }
 
-    if (time <= 2 && time > 0) {
+    // Full darkness at 2s
+    if (time === 2) {
       document.body.style.backgroundColor = 'black';
-      keyboard.style.opacity = 0;
-      canvas.style.opacity = 0;
     }
 
+    // Flash and popup at 0
     if (time === 0) {
       clearInterval(timerInterval);
       flashScreen();
-      document.body.style.backgroundColor = '';
-      keyboard.style.opacity = 1;
-      canvas.style.opacity = 1;
-
-      const roast = getRandomRoast();
-      popupRoast.textContent = `⏰ Time’s up! ${roast} Word was: ${selectedWord}`;
-      roastPopup.classList.remove('hidden');
-
-      disableKeyboard();
+      setTimeout(() => {
+        document.body.style.backgroundColor = '';
+        disableKeyboard();
+        const roast = getRandomRoast();
+        showPopup(`⏰ Time’s up!<br><br>${roast}<br><br>Word was: <strong>${selectedWord}</strong>`);
+      }, 300);
     }
   }, 1000);
 }
@@ -133,11 +157,7 @@ function updateDisplay() {
 
 function generateKeyboard() {
   keyboard.innerHTML = '';
-  const layout = [
-    'QWERTYUIOP',
-    'ASDFGHJKL',
-    'ZXCVBNM'
-  ];
+  const layout = ['QWERTYUIOP', 'ASDFGHJKL', 'ZXCVBNM'];
   layout.forEach(row => {
     const rowDiv = document.createElement('div');
     rowDiv.classList.add('keyboard-row');
@@ -155,9 +175,7 @@ function generateKeyboard() {
 
 function handleGuess(letter) {
   if (selectedWord.includes(letter)) {
-    if (!correctLetters.includes(letter)) {
-      correctLetters.push(letter);
-    }
+    if (!correctLetters.includes(letter)) correctLetters.push(letter);
   } else {
     if (!wrongLetters.includes(letter)) {
       wrongLetters.push(letter);
@@ -178,16 +196,18 @@ function checkGameStatus() {
     clearInterval(timerInterval);
     setTimeout(startGame, 1500);
   }
+
   if (wrongLetters.length >= maxAttempts) {
-    message.textContent = `💀 You Lost! ${getRandomRoast()} Word was: ${selectedWord}`;
-    disableKeyboard();
     clearInterval(timerInterval);
+    disableKeyboard();
+    const roast = getRandomRoast();
+    showPopup(`💀 You Lost!<br><br>${roast}<br><br>Word was: <strong>${selectedWord}</strong>`);
   }
 }
 
 function disableKeyboard() {
   const buttons = keyboard.querySelectorAll('button');
-  buttons.forEach(btn => btn.disabled = true);
+  buttons.forEach(btn => (btn.disabled = true));
 }
 
 function clearCanvas() {
@@ -207,12 +227,12 @@ function drawBase() {
 
 function drawHangman(wrongCount) {
   const animations = [
-    () => ctx.arc(130, 60, 20, 0, Math.PI * 2),
-    () => animateLine(130, 80, 130, 140),
-    () => animateLine(130, 100, 100, 120),
-    () => animateLine(130, 100, 160, 120),
-    () => animateLine(130, 140, 100, 180),
-    () => animateLine(130, 140, 160, 180)
+    () => ctx.arc(130, 60, 20, 0, Math.PI * 2), // head
+    () => animateLine(130, 80, 130, 140),      // body
+    () => animateLine(130, 100, 100, 120),     // left arm
+    () => animateLine(130, 100, 160, 120),     // right arm
+    () => animateLine(130, 140, 100, 180),     // left leg
+    () => animateLine(130, 140, 160, 180)      // right leg
   ];
   if (wrongCount > 0 && wrongCount <= animations.length) {
     ctx.beginPath();
@@ -235,6 +255,7 @@ function animateLine(x1, y1, x2, y2) {
   step();
 }
 
+// Start and Restart
 startBtn.addEventListener('click', () => {
   score = 0;
   level = 0;
@@ -264,6 +285,7 @@ restartBtn.addEventListener('click', () => {
   document.body.style.backgroundColor = '';
 });
 
+// Theme Toggle
 toggleBtn.addEventListener('click', () => {
   document.body.classList.toggle('dark-mode');
   toggleBtn.textContent = document.body.classList.contains('dark-mode') ? '🌙' : '🌞';
