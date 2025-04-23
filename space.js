@@ -34,7 +34,7 @@ popup.className = 'popup-box';
 document.body.appendChild(popup);
 popup.style.display = 'none';
 
-const tickSound = new Audio('tick.mp3');
+const tickSound = new Audio('ticking sound.mp3');
 tickSound.loop = true;
 tickSound.volume = 0;
 
