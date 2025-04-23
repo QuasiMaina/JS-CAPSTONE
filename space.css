@@ -176,7 +176,15 @@ body {
   z-index: 99;
   transition: opacity 0.5s ease-in-out;
 }
+/*FLASH  */
+.flash {
+  animation: flashEffect 0.3s ease-in-out;
+}
 
+@keyframes flashEffect {
+  0% { background-color: #fff; }
+  100% { background-color: inherit; }
+}
 
 
 /* ✅ Mobile Responsive */
