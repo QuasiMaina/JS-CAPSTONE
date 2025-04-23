@@ -90,12 +90,12 @@ function resetTimer() {
     timerSpan.textContent = time;
 
     // Ticking logic 🔊
-    if (time <= 20 && time > 2) {
+    if (time <= 20 && time > 1) {
       if (tickSound.paused) tickSound.play();
       tickSound.volume = (1 - (time - 3) / 17); // from 0 at 20s to 1 at 3s
     }
 
-    if (time === 2) {
+    if (time === 1) {
       tickSound.volume = 0;
       tickSound.pause();
       document.body.style.backgroundColor = '#000'; // PITCH BLACK
