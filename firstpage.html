@@ -1,0 +1,108 @@
+<!-- landing.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title> JUVENILE GIBBET (JG)</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f0f0f0;
+      text-align: center;
+      padding: 2rem;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h1 {
+      margin-bottom: 1rem;
+    }
+    p {
+      line-height: 1.6;
+    }
+    .countdown {
+      margin-top: 1.5rem;
+      font-size: 1.2rem;
+      color: #555;
+    }
+    .next-btn {
+      margin-top: 2rem;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .next-btn:hover {
+      background-color: #0056b3;
+    }
+
+ .back-to-rules {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  text-decoration: none;
+  background-color: #222;
+  color: #5716ee;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  box-shadow: 2px 2px 8px rgba(0,0,0,0.2);
+}
+
+.back-to-rules:hover {
+  background-color: #444;
+  transform: translateY(-2px);
+  box-shadow: 3px 3px 12px rgba(0,0,0,0.3);
+}
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Welcome to JG the 5YR OLD edition of Hangman  🔠💀</h1>
+    <p>Guess the hidden word one letter at a time.<br>
+    Each incorrect guess draws a part of the hangman.<br>
+    You have <strong>6 chances</strong> before it's game over.<br>
+    Use the keyboard below the word to play.<br><br>
+    The game gets harder as you level up — and yes, you'll get roasted if you lose. 😈
+
+
+
+
+<i>The words used were tested on some 5yr old. So it's legit💀 </i></p>
+
+    <div class="countdown">
+      Starting automatically in <span id="count">30</span> seconds...
+    </div>
+
+    <button class="next-btn" onclick="goToGame()">Next →</button>
+  </div>
+
+  <script>
+    let count = 30;
+    const countSpan = document.getElementById('count');
+    const countdown = setInterval(() => {
+      count--;
+      countSpan.textContent = count;
+      if (count === 0) {
+        clearInterval(countdown);
+        goToGame();
+      }
+    }, 1000);
+
+    function goToGame() {
+      window.location.href = "index.html";
+    }
+  </script>
+</body>
+</html>
