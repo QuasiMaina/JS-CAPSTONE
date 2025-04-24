@@ -55,14 +55,15 @@ const allRoasts = [
   "Haujui kuguess?", 
   "Kababa usi jiumize uki fikiria",
   "Haujui hii?", 
-  "You're the reason the hangman lost his job.",
+  "What do you have aganist Billy?",
   "Hope you’re better at life than this game.",
   "English not Englishing?", 
-  "Oof. That word was easier than breathing.",
+  "Do you not like kids?.",
   "I'm genuinely disappointed in you.",
-  "Surely, na ati wewe ni grown up...",
-  "JUST. SMH!",
+  "You've commited Billicide!!",
+  "Say Bye to Billy",
   "usi jali kamum, at least wewe ni mrembo.",
+  "FYI, Billy wanted to be an English Teacher, until you..."
 ];
 let roastQueue = shuffleArray([...allRoasts]);
 
