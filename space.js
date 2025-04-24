@@ -58,12 +58,12 @@ const allRoasts = [
   "What do you have aganist Billy?",
   "Hope you’re better at life than this game.",
   "English not Englishing?", 
-  "Do you not like kids?.",
+  "Do you not like kids...?",
   "I'm genuinely disappointed in you.",
   "You've commited Billicide!!",
   "Say Bye to Billy",
-  "usi jali kamum, at least wewe ni mrembo.",
-  "FYI, Billy wanted to be an English Teacher, until you..."
+  "usi jali kamum, at least wewe ni mrembo...",
+  "Billy wanted to be an English Teacher, until you came along..."
 ];
 let roastQueue = shuffleArray([...allRoasts]);
 
