@@ -5,28 +5,136 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Hangman Game</title>
   <link rel="stylesheet" href="space.css" />
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: white;
+    }
+
+    .game-container {
+      padding: 20px;
+      text-align: center;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .top-bar button,
+    #restart-btn {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 6px;
+      background-color: #333;
+      color: white;
+      cursor: pointer;
+    }
+
+    .top-bar button:hover,
+    #restart-btn:hover {
+      background-color: #555;
+    }
+
+    .info-button {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      padding: 8px;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      color: white;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    }
+
+    .info-button:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+      transform: scale(1.05);
+    }
+
+    canvas {
+      background-color: #222;
+      margin: 20px 0;
+      border-radius: 12px;
+    }
+
+    .keyboard {
+      margin-top: 20px;
+    }
+
+    .keyboard-row {
+      margin: 4px 0;
+    }
+
+    .keyboard .key {
+      padding: 8px 12px;
+      margin: 2px;
+      border: none;
+      border-radius: 6px;
+      background-color: #333;
+      color: white;
+      cursor: pointer;
+    }
+
+    .keyboard .key.correct {
+      background-color: green;
+    }
+
+    .keyboard .key.wrong {
+      background-color: crimson;
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 8px;
+    }
+
+    #message {
+      margin: 20px 0;
+      font-weight: bold;
+      color: tomato;
+    }
+  </style>
 </head>
 <body>
+  <a href="index.html" class="info-button" title="Info / Rules">
+    <svg xmlns="http://www.w3.org/2000/svg" height="22" width="22" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M11 7h2v2h-2V7zm0 4h2v6h-2v-6zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10
+               10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 
+               8-8 8 3.59 8 8-3.59 8-8 8z"/>
+    </svg>
+  </a>
+
   <div class="game-container">
     <div class="top-bar">
-        <span>Score: <span id="score">0</span></span>
-        <span>Time: <span id="timer">30</span>s</span>
-        <button id="toggle-theme">🌞</button>
-        <button id="start-btn">Start Game</button>
-         <a href="index.html" class="back-to-rules">← Back to Rules</a>
+      <span>Score: <span id="score">0</span></span>
+      <span>Time: <span id="timer">30</span>s</span>
+      <button id="toggle-theme">🌞</button>
+      <button id="start-btn">Start Game</button>
+    </div>
 
-      </div>
     <div id="dark-overlay"></div>
 
     <h1>DON'T LET BILLY DOWN</h1>
-    <p>it's either Right or Billy's neck.</p>
+    <p>It's either right... or Billy's neck.</p>
+
     <div class="game-board">
-        <canvas id="hangman-canvas" width="200" height="250"></canvas>
-        <div class="keyboard" id="keyboard"></div>
-      </div>
-      
+      <canvas id="hangman-canvas" width="200" height="250"></canvas>
+      <div class="keyboard" id="keyboard"></div>
+    </div>
+
     <div id="word"></div>
-    <div class="keyboard" id="keyboard"></div>
     <p>Wrong guesses: <span id="wrong-letters"></span></p>
     <p>Attempts left: <span id="attempts"></span></p>
     <p id="message"></p>
