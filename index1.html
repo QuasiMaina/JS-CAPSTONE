@@ -6,81 +6,49 @@
   <title>Hangman Game</title>
   <link rel="stylesheet" href="space.css" />
   <style>
-    body {
-      font-family: 'Arial', sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #f8f8f8;
-    }
-
-    .game-container {
-      padding: 1rem;
-      max-width: 800px;
-      margin: 0 auto;
-      text-align: center;
-    }
-
-    .top-bar {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1rem;
-    }
-
-    .top-bar span,
-    .top-bar button {
-      margin: 0.5rem;
-    }
-
-    #hangman-canvas {
-      background-color: #fff;
-      border: 1px solid #ccc;
-      margin-bottom: 1rem;
-    }
-
-    .keyboard {
-      margin: 1rem 0;
-    }
-
-    .keyboard button {
-      margin: 4px;
-      padding: 10px;
-      font-size: 16px;
-    }
-
-    .info-button {
+    #blackout {
       position: fixed;
-      bottom: 16px;
-      right: 16px;
-      z-index: 1000;
-      background-color: #222;
-      color: white;
-      border: none;
-      border-radius: 50%;
-      width: 48px;
-      height: 48px;
-      font-size: 22px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-decoration: none;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-      transition: all 0.3s ease;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: black;
+      z-index: 9998;
+      transition: opacity 0.5s ease;
     }
 
-    .info-button:hover {
-      background-color: #444;
-      transform: scale(1.05);
-    }
+    @media (max-width: 768px) {
+      .game-board {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
 
-    @media (max-width: 500px) {
-      .info-button {
-        width: 44px;
-        height: 44px;
-        font-size: 20px;
-        bottom: 12px;
-        right: 12px;
+      #hangman-canvas {
+        width: 100%;
+        max-width: 300px;
+        margin-bottom: 1rem;
+      }
+
+      .keyboard {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 4px;
+        max-width: 100%;
+      }
+
+      .keyboard-row {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        gap: 4px;
+      }
+
+      .key {
+        flex: 1 1 8%;
+        padding: 0.75rem;
+        font-size: 1.1rem;
       }
     }
   </style>
@@ -88,20 +56,19 @@
 <body>
   <div class="game-container">
     <div class="top-bar">
-      <span>Score: <span id="score">0</span></span>
-      <span>Time: <span id="timer">30</span>s</span>
-      <button id="toggle-theme">🌞</button>
-      <button id="start-btn">Start Game</button>
+        <span>Score: <span id="score">0</span></span>
+        <span>Time: <span id="timer">30</span>s</span>
+        <button id="toggle-theme">🌞</button>
+        <button id="start-btn">Start Game</button>
+        <a href="index.html" class="back-to-rules">ℹ Info</a>
     </div>
-
     <div id="dark-overlay"></div>
 
     <h1>DON'T LET BILLY DOWN</h1>
     <p>it's either Right or Billy's neck.</p>
-
     <div class="game-board">
-      <canvas id="hangman-canvas" width="200" height="250"></canvas>
-      <div class="keyboard" id="keyboard"></div>
+        <canvas id="hangman-canvas" width="200" height="250"></canvas>
+        <div class="keyboard" id="keyboard"></div>
     </div>
 
     <div id="word"></div>
@@ -110,11 +77,6 @@
     <p id="message"></p>
     <button id="restart-btn">Restart</button>
   </div>
-
-  <!-- Info Button -->
-  <a href="index.html" class="info-button" title="Game Info">
-    ℹ️
-  </a>
 
   <script src="space.js"></script>
 </body>
