@@ -6,72 +6,58 @@
   <title>Hangman Game</title>
   <link rel="stylesheet" href="space.css" />
   <style>
-    #blackout {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background-color: black;
-      z-index: 9998;
-      transition: opacity 0.5s ease;
+    /*  Info button */
+    .info-btn {
+      background-color: #333;
+      color: white;
+      border: none;
+      padding: 0.4rem 0.8rem;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
     }
 
-    @media (max-width: 768px) {
-      .game-board {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-      }
+    .info-btn:hover {
+      background-color: #555;
+    }
 
-      #hangman-canvas {
-        width: 100%;
-        max-width: 300px;
-        margin-bottom: 1rem;
-      }
-
-      .keyboard {
-        display: flex;
+    @media (max-width: 600px) {
+      .top-bar {
         flex-wrap: wrap;
+        gap: 0.5rem;
         justify-content: center;
-        gap: 4px;
-        max-width: 100%;
       }
-
-      .keyboard-row {
-        width: 100%;
-        display: flex;
-        justify-content: center;
-        gap: 4px;
-      }
-
-      .key {
-        flex: 1 1 8%;
-        padding: 0.75rem;
-        font-size: 1.1rem;
+      .info-btn {
+        padding: 0.3rem 0.6rem;
+        font-size: 0.85rem;
       }
     }
   </style>
 </head>
 <body>
   <div class="game-container">
-    <div class="top-bar">
-        <span>Score: <span id="score">0</span></span>
-        <span>Time: <span id="timer">30</span>s</span>
-        <button id="toggle-theme">🌞</button>
-        <button id="start-btn">Start Game</button>
-        <a href="index.html" class="back-to-rules">ℹ Info</a>
+    <div class="top-bar" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+      <span>Score: <span id="score">0</span></span>
+      <span>Time: <span id="timer">30</span>s</span>
+      <button id="toggle-theme">🌞</button>
+      <button id="start-btn">Start Game</button>
+      <button class="info-btn" onclick="window.location.href='index.html'">ℹ Info</button>
     </div>
+
     <div id="dark-overlay"></div>
 
     <h1>DON'T LET BILLY DOWN</h1>
     <p>it's either Right or Billy's neck.</p>
+
     <div class="game-board">
-        <canvas id="hangman-canvas" width="200" height="250"></canvas>
-        <div class="keyboard" id="keyboard"></div>
+      <canvas id="hangman-canvas" width="200" height="250"></canvas>
+      <div class="keyboard" id="keyboard"></div>
     </div>
 
     <div id="word"></div>
+    <div class="keyboard" id="keyboard"></div>
+
     <p>Wrong guesses: <span id="wrong-letters"></span></p>
     <p>Attempts left: <span id="attempts"></span></p>
     <p id="message"></p>
